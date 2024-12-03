@@ -83,3 +83,16 @@ Hover again to delete last word (which is marked)
 -> edit
   When you enter to edit a word, you can also edit the key
 
+-> keyboard
+    center, smaller
+
+-> guesser
+    consider context
+    2 steps?
+    sentence structure?
+      place -> I want to go to ___
+      object -> I want ____
+      verb -> I ___
+
+-> new click
+    deactivate guesser
