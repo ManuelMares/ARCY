@@ -54,8 +54,17 @@ export default tseslint.config({
 
 
 ## run project
-pnpm install
-pnpm run dev
+install nvm -> node package manager
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+load nvm
+	export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+install node
+	nvm install node
+install pnpm
+	 curl -fsSL https://get.pnpm.io/install.sh | sh -
+install vite
+	pnpm add -D vite
 
 
 ## functionallity
@@ -64,8 +73,6 @@ Hover again to delete last word (which is marked)
 
 
 # Ideas
--> word guessing
-1) word guesser
 2) autocompleter
 3) sentence guesser divided by word
   Update sentence guesser, except when clicked on a button of this category

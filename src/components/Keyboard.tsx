@@ -249,8 +249,8 @@ export default function Keyobard(){
 
 
                 {/* KEYBOARD */}
-                <GridItem area="Keyboard"  h="100%" bgColor={"blackAlpha.400"} borderRadius={"md"}>
-                    <Flex  h="100%" w="70%" flexDir={"column"} justifyContent={"center"} alignItems={"center"}>
+                <GridItem area="Keyboard"  h="100%" bgColor={"blackAlpha.400"} borderRadius={"md"} w="100%"  justifyContent={"center"} alignItems={"center"}  justifyItems={"center"} alignContent={"center"}>
+                    <Flex  h="100%" w="70%" flexDir={"column"} flexWrap={"nowrap"} justifyContent={"center"} alignItems={"center"}  justifyItems={"center"} alignContent={"center"}>
                         
                         <Flex
                             w="100%"
@@ -306,7 +306,7 @@ export default function Keyobard(){
 
 
                     {/* PUNCTUATION */}
-                <GridItem area="punctuation" bgColor="blackAlpha.500" h="100%" >
+                <GridItem area="punctuation" bgColor="blackAlpha.500" h="100%"   justifyContent={"center"} alignItems={"center"}  justifyItems={"center"} alignContent={"center"} >
                     <Flex  h="100%" w="70%" flexDir={"column"} justifyContent={"center"}  alignItems={"center"}>
                     {/* <Flex  h="100%" flexDir={"column"} justifyContent={"space-around"}> */}
                         
