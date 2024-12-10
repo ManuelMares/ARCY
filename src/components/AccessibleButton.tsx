@@ -2,13 +2,14 @@ import { Button, ButtonProps } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 
 interface AccessibleButtonProps extends ButtonProps {
-    onClick: () => void;
+    onClick?: () => void;
+    onCustomClick?: (button: HTMLButtonElement) => void;
     delay: number;
 }
 
 export default function AccessibleButton(props: AccessibleButtonProps) {
     const ANIMATION_TIME = 300;
-    const { onClick, delay, ...rest } = props;
+    const { onCustomClick, onClick, delay, ...rest } = props;
 
     const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -20,7 +21,10 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
             const originalColor = button.style.backgroundColor;
             button.style.backgroundColor = "blue";
             
-            onClick();
+            if(onCustomClick)
+                onCustomClick(button);
+            if(onClick)
+                onClick();
 
             setClickTriggered(true);
             cancel_click();
@@ -42,7 +46,10 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
                 const originalColor = button.style.backgroundColor;
                 button.style.backgroundColor = "blue";
                 
-                onClick();
+                if(onCustomClick)
+                    onCustomClick(button);
+                if(onClick)
+                    onClick();
 
                 // click animation
                 setTimeout(() => {
@@ -65,7 +72,7 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
             onMouseEnter={hover_click}
             onMouseLeave={cancel_click}
             onClick={mouse_click}
-            {...rest}  // Spread other props here to avoid overwriting onClick
+            {...rest}
         >
             {props.children}
         </Button>

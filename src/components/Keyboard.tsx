@@ -5,6 +5,7 @@ import AccessibleButton from "./AccessibleButton";
 import BufferSuggestions from "./BufferSuggestions";
 import SentenceGuesser from "./SentenceGuesser";
 
+
 export default function Keyobard(){
     const [isInCaps, setIsInCaps] = useState<boolean>(true);
     const [text, setText] = useState<string>("");
@@ -158,6 +159,13 @@ export default function Keyobard(){
         setText(words.join(" "));
     }
 
+
+
+    /*Edit word*/
+    function editWord(button:HTMLButtonElement){
+        alert(button);
+    }
+
     return(
         <>
             <Grid
@@ -181,7 +189,7 @@ export default function Keyobard(){
                         {
                             text.split(" ").map((word:string, index:number) => {
                                 return(
-                                    <AccessibleButton fontSize={fontSize} key={"key"+index} minW={"0.2rem"} m="0" p="0.2rem" bg="white" delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>{word}</AccessibleButton>
+                                    <AccessibleButton fontSize={fontSize} key={"key"+index} minW={"0.2rem"} m="0" p="0.2rem" bg="white" delay={clickSpeed} onCustomClick={editWord}>{word}</AccessibleButton>
                                 )
                             })
                         }
