@@ -44,30 +44,37 @@ export default function Keyobard(){
 
     useEffect(() => {
         setIsGuesserSentenceSuggesion(false);
+        // You are a helpful text autocompleter that helps by guessing what the next word in the paragraph will be. 
+
+        // You are a helpful text completion system for a person who cannot talk or move. She uses it for communication. She is a friendly person and likes to
+        // talk casually and keep it short.
+
+
+        setPrompt(`
+            You are a helpful text completion system for a person who cannot talk or move. She relies completely on you for communication. 
+            She is a friendly person and likes to talk casually and keep it short. 
+            She is a student in spanish department. She likes to talk to her friends and family.
+
+            You are a helpful text autocompleter that helps by guessing what the next word in the paragraph will be. 
+            Your job is to help her by guessing what the next word in the paragraph will be. 
+            You work this way: I will give you a text, and you guess the immediate most likely word to be used. 
+            You provide in total 15 guess words, never more. your answer do not include extra words, just 15 words which are guesses.
+            If the text I give you is empty, try to guess the word that can start the most sentences. Something generic, like 'I', but give me still 15 options
+            Sentences should be something she would use in daily life with friends, family and in school.
+            sentences that have same word but in different tenses and participle form.`
+        );
         if(buffer === ""){
             //empty buffer only adds to the text
-            setPrompt(`
-                You are a helpful text autocompleter that helps by guessing what the next word in the paragraph will be. 
-                You work this way: I will give you a text, and you guess the immediate most likely word to be used. 
-                You provide in total 15 guess words, never more. your answer do not include extra words, just 15 words which are guesses.
-                If the text I give you is empty, try to guess the word that can start the most sentences. Something generic, like 'I', but give me still 15 options`
-            );
             setPromptContent(`
                 The context of my text is: ${context}. This means, all the words, and therefore, all your suggestions, must be related to ${context}
                 text: "${text}" 
                 What is the next word? 
-                ${hasWordGroup ? "All the options must be "+wordGroup+". Do not return any word if they are not "+wordGroup+". Seriously, only suggest"+wordGroup+" or nothing." : ""}`);
+                ${hasWordGroup ? "All the options must be "+wordGroup+". Do not return any word if they are not "+wordGroup+". Seriously, only suggest"+wordGroup+" or nothing." : ""}
+                `);
             setIsReplacingBuffer(false);
         }
         else{
             //Since there is a buffer, it must be replaced by suggestion
-            setPrompt(`
-                You are a helpful text guesser that helps by guessing what the next word in the paragraph will be. 
-                You work this way: I will give you a text, and you guess the immediate most likely word to be used. 
-                You provide in total 15 guess words, never more. your answer do not include extra words, just 15 words which are guesses.
-                If the text I give you is empty, try to guess the word that can start the most sentences. Something generic, like 'I'.
-                To help you guess the next word, I will give you a clue of the first few letter in the next word.
-            `);
             setPromptContent(`
                 The context of my text is: ${context}. This means, all the words, and therefore, all your suggestions, must be related to ${context}
                 text: "${text}" 
@@ -99,11 +106,16 @@ export default function Keyobard(){
     function guessSentence(){
         setIsReplacingBuffer(false);
         setPrompt(`
+            You are a helpful text completion system for a person who cannot talk or move. She relies completely on you for communication. 
+            She is a friendly person and likes to talk casually and keep it short. 
+            She is a student in spanish department. She likes to talk to her friends and family.
+            
             You are a helpful sentences auto-completer. I will give you few words from a sentence, and you will try to guess what the complete sentence is.
             Your answer will include no extra words or explanations, just ${NUMBER_GUESSED_SENTENCES} sentences separated by semicolon.
             Example: If you give you "I water", four guesses for the original complete sentence are:
             "I want water;I drink water;I need water;I fell in the water".
             Do not add quote marks
+            I need sentences that starts with "I", but also has "am", "want", "need", "would" or similar things. Sentences should be something she would use in daily life with friends, family and in school.
         `);
         setPromptContent(`
             these are the words you will use to guess the original complete sentence: "${text}". 
