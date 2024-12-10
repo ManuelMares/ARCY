@@ -2,8 +2,8 @@ import { Button, ButtonProps } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 
 interface AccessibleButtonProps extends ButtonProps {
-    onClick?: () => void;
-    onCustomClick?: (button: HTMLButtonElement) => void;
+    onClick?: () => void;                                       // Function triggered with no parameter
+    onCustomClick?: (button: HTMLButtonElement) => void;        // Function triggered with Button itself as parameter. usage: function editWord(button:HTMLButtonElement)
     delay: number;
 }
 
