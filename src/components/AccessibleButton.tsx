@@ -3,13 +3,14 @@ import { useRef, useState } from 'react';
 
 interface AccessibleButtonProps extends ButtonProps {
     onClick?: () => void;                                       // Function triggered with no parameter
-    onCustomClick?: (button: HTMLButtonElement) => void;        // Function triggered with Button itself as parameter. usage: function editWord(button:HTMLButtonElement)
+    onCustomClick?: (button: HTMLButtonElement, keyId:number) => void;        // Function triggered with Button itself as parameter. usage: function editWord(button:HTMLButtonElement)
     delay: number;
+    keyId?: number;
 }
 
 export default function AccessibleButton(props: AccessibleButtonProps) {
     const ANIMATION_TIME = 300;
-    const { onCustomClick, onClick, delay, ...rest } = props;
+    const { onCustomClick, onClick, delay, keyId, ...rest } = props;
 
     const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -21,8 +22,8 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
             const originalColor = button.style.backgroundColor;
             button.style.backgroundColor = "blue";
             
-            if(onCustomClick)
-                onCustomClick(button);
+            if(onCustomClick && keyId)
+                onCustomClick(button, keyId);
             if(onClick)
                 onClick();
 
@@ -46,8 +47,8 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
                 const originalColor = button.style.backgroundColor;
                 button.style.backgroundColor = "blue";
                 
-                if(onCustomClick)
-                    onCustomClick(button);
+                if(onCustomClick && keyId)
+                    onCustomClick(button, keyId);
                 if(onClick)
                     onClick();
 

@@ -1,9 +1,11 @@
-import { Divider, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
+import { Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import '../index.css';
 import { useEffect, useState } from "react";
 import AccessibleButton from "./AccessibleButton";
 import BufferSuggestions from "./BufferSuggestions";
 import SentenceGuesser from "./SentenceGuesser";
+import Settings from "./Settings";
+import SentenceEditor from "./SentenceEditor";
 
 
 export default function Keyobard(){
@@ -23,9 +25,13 @@ export default function Keyobard(){
     const [displaySettings, setDisplaySettings] = useState<string>("none");
     const [clickSpeed, setClickSpeed] = useState<number>(1200);
     const [fontSize, setFontSize] = useState<number>(17);
+    // Sentence editor
+    const [displaySentenceEditor, setDisplaySentenceEditor] = useState<boolean>(false);
+
     // Guesser
     const NUMBER_GUESSED_SENTENCES = 8;
     const [isGuesserSentenceSuggestion, setIsGuesserSentenceSuggesion] = useState<boolean>(false)
+
 
     function changeClickSpeed(change:number){
         setClickSpeed(clickSpeed + change);
@@ -160,10 +166,23 @@ export default function Keyobard(){
     }
 
 
+    const [preSentence, setPreSentence] = useState<string>("");
+    const [postSentence, setPostSentence] = useState<string>("");
 
     /*Edit word*/
-    function editWord(button:HTMLButtonElement){
-        alert(button);
+    function editWord(button:HTMLButtonElement, wordIndex:number){
+        const words = text.split(' '); // Split the text into words
+        if(wordIndex == 0 || wordIndex == words.length -2)
+            return;
+        const firstPart = words.slice(0, wordIndex).join(' '); // Get the first part
+        const word = words[wordIndex]; // Get the first part
+        const secondPart = words.slice(wordIndex + 1).join(' '); // Get the second part
+
+        setPreSentence(firstPart);
+        setPostSentence(secondPart);
+        setBuffer(word);
+
+        setDisplaySentenceEditor(true);
     }
 
     return(
@@ -189,7 +208,7 @@ export default function Keyobard(){
                         {
                             text.split(" ").map((word:string, index:number) => {
                                 return(
-                                    <AccessibleButton fontSize={fontSize} key={"key"+index} minW={"0.2rem"} m="0" p="0.2rem" bg="white" delay={clickSpeed} onCustomClick={editWord}>{word}</AccessibleButton>
+                                    <AccessibleButton fontSize={fontSize} keyId={index} key={"key"+index} minW={"0.2rem"} m="0" p="0.2rem" bg="white" delay={clickSpeed} onCustomClick={editWord}>{word}</AccessibleButton>
                                 )
                             })
                         }
@@ -338,44 +357,31 @@ export default function Keyobard(){
                         </Flex>
                     </Flex>
                 </GridItem>
-
-
-
-
-
-
-
-
-
-
-
+            </Grid>
 
 
                 {/* DRAWER SETTINGS */}
-                
-            </Grid>
-            <Flex display={displaySettings} className="blurry-bg" position={"absolute"} top={"0vh"} left="0vw"  w="100vw" h="100vh" justifyContent={"center"} alignItems={"center"}>
-                <Flex flexDir={"column"} w="80vw" h="80vh"  bgColor="white" borderRadius={"lg"} p="5rem">
-                    <Flex justifyContent={"space-between"} p="0" m="0" w="100%">
-                        <Text fontSize={fontSize+3} fontWeight={"bold"}>Settings</Text>
-                        <AccessibleButton colorScheme="red" fontSize={fontSize} delay={clickSpeed} onClick={()=>{setDisplaySettings("none")}}>X</AccessibleButton>
+
+            {
+                displaySettings === "none"
+                ?
+                    null
+                :
+                    <Flex className="blurry-bg" position={"absolute"} top={"0vh"} left="0vw"  w="100vw" h="100vh" justifyContent={"center"} alignItems={"center"}>
+                        <Settings clickSpeed={clickSpeed} fontSize={fontSize} changeClickSpeed={changeClickSpeed} changeFontSize={changeFontSize} setDisplaySettings={setDisplaySettings} />
                     </Flex>
-                    <Divider my="3rem"></Divider>
-                    {/* Click speed */}
-                    <Flex w="20rem" justifyContent={"center"} alignItems={"center"} my="2rem">
-                        <Text textAlign={"left"} w="10rem" fontSize={fontSize} fontWeight={"bold"}>Clicking Speed</Text>
-                        <AccessibleButton disabled={(clickSpeed <= 500)} fontSize={fontSize} colorScheme="cyan" borderRadius={"3xl"}  delay={clickSpeed} onClick={()=>{changeClickSpeed(-100)}} >-</AccessibleButton>
-                        <Text w="5rem" fontSize={fontSize}>{clickSpeed/1000} sec</Text>
-                        <AccessibleButton disabled={(clickSpeed >= 1500)}  fontSize={fontSize} colorScheme="cyan" borderRadius={"3xl"} delay={clickSpeed} onClick={()=>{changeClickSpeed(100)}} >+</AccessibleButton>
+            }
+            {
+                displaySentenceEditor
+                ?
+                    <Flex className="blurry-bg" position={"absolute"} top={"0vh"} left="0vw"  w="100vw" h="30vh" justifyContent={"center"} alignItems={"center"}>
+                        <SentenceEditor clickSpeed={clickSpeed} fontSize={fontSize} buffer={buffer} preSentence={preSentence} postSentence={postSentence} setDisplaySentenceEditor={setDisplaySentenceEditor} />
                     </Flex>
-                    <Flex w="20rem" justifyContent={"center"} alignItems={"center"} my="2rem">
-                        <Text textAlign={"left"} w="10rem" fontWeight={"bold"} fontSize={fontSize}>Font Size</Text>
-                        <AccessibleButton disabled={(fontSize <= 5)} fontSize={fontSize} colorScheme="cyan" borderRadius={"3xl"}  delay={clickSpeed} onClick={()=>{changeFontSize(-0.5)}} >-</AccessibleButton>
-                        <Text  w="5rem" fontSize={fontSize}>{fontSize}</Text>
-                        <AccessibleButton disabled={(fontSize >=  20)} fontSize={fontSize} colorScheme="cyan" borderRadius={"3xl"} delay={clickSpeed} onClick={()=>{changeFontSize(+0.5)}} >+</AccessibleButton>
-                    </Flex>
-                </Flex>
-            </Flex>
+                :
+                    null
+            }
+
+
         </>
     )
 }
