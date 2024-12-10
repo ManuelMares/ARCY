@@ -9,7 +9,7 @@ interface AccessibleButtonProps extends ButtonProps {
 }
 
 export default function AccessibleButton(props: AccessibleButtonProps) {
-    const ANIMATION_TIME = 300;
+    const ANIMATION_TIME = 100;
     const { onCustomClick, onClick, delay, keyId, ...rest } = props;
 
     const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);

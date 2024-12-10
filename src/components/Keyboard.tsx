@@ -6,9 +6,10 @@ import BufferSuggestions from "./BufferSuggestions";
 import SentenceGuesser from "./SentenceGuesser";
 import Settings from "./Settings";
 import SentenceEditor from "./SentenceEditor";
-
+import Speak from  './Speak'
 
 export default function Keyobard(){
+    // Variables
     const [isInCaps, setIsInCaps] = useState<boolean>(true);
     const [text, setText] = useState<string>("");
     const [buffer, setBuffer] = useState<string>("");
@@ -31,8 +32,7 @@ export default function Keyobard(){
     // Guesser
     const NUMBER_GUESSED_SENTENCES = 8;
     const [isGuesserSentenceSuggestion, setIsGuesserSentenceSuggesion] = useState<boolean>(false)
-
-
+    
     function changeClickSpeed(change:number){
         setClickSpeed(clickSpeed + change);
         if(clickSpeed < 500)
@@ -73,7 +73,7 @@ export default function Keyobard(){
             //empty buffer only adds to the text
             setPromptContent(`
                 The context of my text is: ${context}. This means, all the words, and therefore, all your suggestions, must be related to ${context}
-                text: "${text}" 
+                text: "${displaySentenceEditor ? preSentence: text}" 
                 What is the next word? 
                 ${hasWordGroup ? "All the options must be "+wordGroup+". Do not return any word if they are not "+wordGroup+". Seriously, only suggest"+wordGroup+" or nothing." : ""}
                 `);
@@ -83,10 +83,12 @@ export default function Keyobard(){
             //Since there is a buffer, it must be replaced by suggestion
             setPromptContent(`
                 The context of my text is: ${context}. This means, all the words, and therefore, all your suggestions, must be related to ${context}
-                text: "${text}" 
+                text: "${displaySentenceEditor ? preSentence: text}" 
                 What is the next word? 
                 Guess the next word I am thinking of. The next word starts with the characters "${buffer})"
-                ${hasWordGroup ? "All the options must be "+wordGroup+". Do not return any word if they are not "+wordGroup+". Seriously, only suggest"+wordGroup+" or nothing." : ""}`);
+                ${hasWordGroup ? "All the options must be "+wordGroup+". Do not return any word if they are not "+wordGroup+". Seriously, only suggest"+wordGroup+" or nothing." : ""}
+                Also, all suggestions must be in English.
+            `);
             setIsReplacingBuffer(true);
         }
     }, [buffer, text, wordGroup, hasWordGroup, context, hasContext])
@@ -127,6 +129,7 @@ export default function Keyobard(){
             these are the words you will use to guess the original complete sentence: "${text}". 
             ${context === "" ? "" : "Here is a clue for you: The context of the original sentence is: "+context+".\n"} 
             Now, please give me 4 possible options for what the original complete sentence might be considering my clues. Remember the format: ${NUMBER_GUESSED_SENTENCES} sentences separated by semicolons.
+            Also, all suggestions must be in English.
         `);
 
         setIsGuesserSentenceSuggesion(true);
@@ -140,9 +143,21 @@ export default function Keyobard(){
 
     /*    Drops buffer and adds given word to text    */
     function replaceBuffer(word:string){
-        setText(text + word + " ");
-        setBuffer("")
-        setHasWordGroup(false);
+        // If we are editing word, the formula is pretext + buffer + posttext
+        if(displaySentenceEditor)
+        {
+            setText(preSentence + " " + word + " " + postSentence);
+            setBuffer("")
+            setHasWordGroup(false);
+            setDisplaySentenceEditor(false);
+        }
+        else{
+            // If not editing (but adding), the formula is text + buffer
+            setText(text + word + " ");
+            setBuffer("")
+            setHasWordGroup(false);
+        }
+
     }
 
     /*    Adds the buffer making sure there is no space between buffer and previous word    */
@@ -174,7 +189,7 @@ export default function Keyobard(){
         const temp = text.replace(/\s+$/, '');  //get rid of last space
         const words = temp.split(' ');
         words.pop();
-        setText(words.join(" "));
+        setText(words.join(" ") + " ");
     }
 
 
@@ -235,7 +250,7 @@ export default function Keyobard(){
                         <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setText(""); setBuffer("")}}>Clear</AccessibleButton>
                         <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setDisplaySettings("flex")}}>Settings</AccessibleButton>
                         <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{guessSentence()}}>Guesser</AccessibleButton>
-                        {/* <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>Read</AccessibleButton> */}
+                        <Speak fontSize={fontSize} delay={clickSpeed} colorScheme="green" text={text} />
                     </Flex>                    
                 </GridItem>
 
@@ -247,14 +262,14 @@ export default function Keyobard(){
                     <Flex w="1005" h="100%" justifyContent={"space-around"} flexDir={"column"}>
                         <Flex h="50%" p="1rem" justifyContent={"space-evenly"} alignItems={"flex-start"} gap="0.5rem" flexWrap={"wrap"}>
                             <Text w="100%" textAlign={"left"} fontWeight={"bold"} color={"white"}>Categories</Text>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Pronouns") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Pronouns")}}>Pronouns</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Modal Verbs") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Modal Verbs")}}>Modal Verbs</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Articles") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Articles")}}>Articles</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Pronouns") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Pronouns")}}>I, They...</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Modal Verbs") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Modal Verbs")}}>Can, Would...</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Articles") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Articles")}}>The, An...</AccessibleButton>
                             <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Adjectives") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Adjectives")}}>Adjectives</AccessibleButton>
                             <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Verbs") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Verbs")}}>Verbs</AccessibleButton>
                             <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Adverbs") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Adverbs")}}>Adverbs</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Prepositions") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Prepositions")}}>Prepositions</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Conjunctions") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Conjunctions")}}>Conjunctions</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Prepositions") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Prepositions")}}>On, Under....</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Conjunctions") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Conjunctions")}}>For, But...</AccessibleButton>
                             {/* <AccessibleButton delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>Numbers</AccessibleButton> */}
                         </Flex>
 
@@ -262,13 +277,13 @@ export default function Keyobard(){
                         {/* CONTEXT */}
                         <Flex h="50%" p="1rem" justifyContent={"space-around"} gap="0.5rem" flexWrap={"wrap"}>
                             <Text w="100%" textAlign={"left"} fontWeight={"bold"} color={"white"}>Context</Text>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "House") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("House")}}>House</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Story Telling") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("Story Telling")}}>Story Telling</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "School") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("School")}}>School</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "House") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about stuff I do in my house, such as "I watched tv" or "I ate dinner with my parents" or "I will go home"`)}}>House</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Story Telling") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about things that happened before, such as  "I did my homework...", "I went to the concert...", "last month I visited my parent in Chihuahua..."`)}}>Story Telling</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "School") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about school relate stuff, such as "I have an exam tomorrow...", "I had an exam yesterday...", "I have to complete an essay on..."`)}}>School</AccessibleButton>
                             <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Profession") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("Profession")}}>Profession</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Social") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("Social")}}>Social</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Social") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I will talk with my friends about our day to day life. The sentence will vay a lot. I just want to ask basic questions to my friends, and to talk about our lives. Maybe with sentences such as "How are you?", "Would you like to go eat?", "Do you know if we have classes?". The sentence will be very different, but it will be to talk about my friends in short talks. In general, the suggestions you give me must be useful to have casual conversation with my friends. I usually talk about school, house, what I did last few weeks, or what I will do in few weeks or on vacations. Or simply of what I want to do.`)}}>Social</AccessibleButton>
                             <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Store") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("Store")}}>Store</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Restaurant") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("Restaurant")}}>Restaurant</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Restaurant") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I will order food at a restaurant, with sentences similar to "I would like to order...",  "I want an...", "May I have one..."`)}}>Restaurant</AccessibleButton>
 
                         </Flex>
                     </Flex>
@@ -387,7 +402,7 @@ export default function Keyobard(){
                 displaySentenceEditor
                 ?
                     <Flex className="blurry-bg" position={"absolute"} top={"0vh"} left="0vw"  w="100vw" h="30vh" justifyContent={"center"} alignItems={"center"}>
-                        <SentenceEditor clickSpeed={clickSpeed} fontSize={fontSize} buffer={buffer} preSentence={preSentence} postSentence={postSentence} setDisplaySentenceEditor={setDisplaySentenceEditor} />
+                        <SentenceEditor setText={setText} setPostSentence={setPostSentence} setBuffer={setBuffer} clickSpeed={clickSpeed} fontSize={fontSize} buffer={buffer} preSentence={preSentence} postSentence={postSentence} setDisplaySentenceEditor={setDisplaySentenceEditor} />
                     </Flex>
                 :
                     null
