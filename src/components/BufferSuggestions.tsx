@@ -41,12 +41,18 @@ export default function BufferSuggestions(props:Iprops){
             };
             const { data } = await axios.post(apiUrl, requestBody, { headers });
             let response = data.choices[0].message.content;
+            console.log(response);
             response = cleanString(response)
-            response = response.split(" ")
+            console.log(response);
+            response = response.split(/\s+/).filter((word:string) => word.trim() !== "");
+            console.log(response);
             
             if(response.length > 21){
                 response = response.slice(0, 21)
             }
+            
+            // getting rid of empty values
+            response = response.filter((item:string) => item.trim() !== "");
 
             //divide array into three
             const n = response.length;
@@ -88,7 +94,8 @@ export default function BufferSuggestions(props:Iprops){
     
     function cleanString(str:string) {
         const regex = /[^a-zA-Z' \n]/g;
-        return str.replace(regex, '');
+        const temp =  str.replace(regex, '');
+        return temp.replace(/\\n/g, '\n');
     }
 
 

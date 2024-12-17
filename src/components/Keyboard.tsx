@@ -202,7 +202,7 @@ export default function Keyobard(){
         if(wordIndex == 0 || wordIndex == words.length -2)
             return;
         const firstPart = words.slice(0, wordIndex).join(' '); // Get the first part
-        const word = words[wordIndex]; // Get the first part
+        const word = words[wordIndex].trim(); // Get the first part
         const secondPart = words.slice(wordIndex + 1).join(' '); // Get the second part
 
         setPreSentence(firstPart);
@@ -210,6 +210,16 @@ export default function Keyobard(){
         setBuffer(word);
 
         setDisplaySentenceEditor(true);
+    }
+
+    function deleteCharacter() {
+        if(buffer !== ""){
+            setBuffer(buffer.slice(0, -1));
+            return;
+        }
+        else if(text !== ""){
+            setText(text.slice(0, -1));
+        }
     }
 
     return(
@@ -322,7 +332,7 @@ export default function Keyobard(){
                             <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "I":"i")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "I":"i"}</AccessibleButton>
                             <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "O":"o")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "O":"o"}</AccessibleButton>
                             <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "P":"p")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "P":"p"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer.slice(0, -1))}} w="8rem" h="5rem">{"<-"}</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{deleteCharacter()}} w="8rem" h="5rem">{"<-"}</AccessibleButton>
                         </Flex>
                         <Flex
                             w="100%"
