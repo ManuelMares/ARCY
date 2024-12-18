@@ -210,6 +210,7 @@ export default function Keyobard(){
         setBuffer(word);
 
         setDisplaySentenceEditor(true);
+        console.log(button);
     }
 
     function deleteCharacter() {
@@ -240,7 +241,7 @@ export default function Keyobard(){
 
 
                 {/* TEXT */}
-                <GridItem area="Text" bgColor="white" p="1rem" w="100%" h="100%">
+                <GridItem area="Text" bgColor="white" p="1rem" m="0" w="100%" h="100%">
                     <Flex>
                         {
                             text.split(" ").map((word:string, index:number) => {
@@ -254,8 +255,8 @@ export default function Keyobard(){
                 </GridItem>
                 
                 {/* TEXT BUTTONS */}
-                <GridItem area="Buttons" bgColor="white" p="1rem">
-                    <Flex flexDir={"column"} w="100%" h="100%" justifyContent={"space-around"}>
+                <GridItem area="Buttons" bgColor="white" m="0" p="1rem" w="100%" h="100%">
+                    <Flex flexDir={"column"} w="100%" h="100%" m="0" p="0" justifyContent={"space-around"}>
                         <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{removeLastWord()}}>Delete word</AccessibleButton>
                         <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setText(""); setBuffer("")}}>Clear</AccessibleButton>
                         <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setDisplaySettings("flex")}}>Settings</AccessibleButton>
@@ -269,17 +270,17 @@ export default function Keyobard(){
 
                 {/* WORD GROUPS */}
                 <GridItem area="Menu" >
-                    <Flex w="1005" h="100%" justifyContent={"space-around"} flexDir={"column"}>
+                    <Flex w="100%" h="100%" justifyContent={"space-around"} flexDir={"column"} overflow={"auto"}>
                         <Flex h="50%" p="1rem" justifyContent={"space-evenly"} alignItems={"flex-start"} gap="0.5rem" flexWrap={"wrap"}>
                             <Text w="100%" textAlign={"left"} fontWeight={"bold"} color={"white"}>Categories</Text>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Pronouns") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Pronouns")}}>I, They...</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Modal Verbs") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Modal Verbs")}}>Can, Would...</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Articles") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Articles")}}>The, An...</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Adjectives") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Adjectives")}}>Adjectives</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Verbs") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Verbs")}}>Verbs</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Adverbs") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Adverbs")}}>Adverbs</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Prepositions") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Prepositions")}}>On, Under....</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Conjunctions") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Conjunctions")}}>For, But...</AccessibleButton>
+                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Pronouns") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Pronouns")}}>I, They...</AccessibleButton>
+                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Modal Verbs") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Modal Verbs")}}>Can, Would...</AccessibleButton>
+                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Articles") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Articles")}}>The, An...</AccessibleButton>
+                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Adjectives") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Adjectives")}}>Adjectives</AccessibleButton>
+                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Verbs") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Verbs")}}>Verbs</AccessibleButton>
+                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Adverbs") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Adverbs")}}>Adverbs</AccessibleButton>
+                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Prepositions") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Prepositions")}}>On, Under....</AccessibleButton>
+                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Conjunctions") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Conjunctions")}}>For, But...</AccessibleButton>
                             {/* <AccessibleButton delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>Numbers</AccessibleButton> */}
                         </Flex>
 
@@ -287,13 +288,13 @@ export default function Keyobard(){
                         {/* CONTEXT */}
                         <Flex h="50%" p="1rem" justifyContent={"space-around"} gap="0.5rem" flexWrap={"wrap"}>
                             <Text w="100%" textAlign={"left"} fontWeight={"bold"} color={"white"}>Context</Text>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "House") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about stuff I do in my house, such as "I watched tv" or "I ate dinner with my parents" or "I will go home"`)}}>House</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Story Telling") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about things that happened before, such as  "I did my homework...", "I went to the concert...", "last month I visited my parent in Chihuahua..."`)}}>Story Telling</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "School") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about school relate stuff, such as "I have an exam tomorrow...", "I had an exam yesterday...", "I have to complete an essay on..."`)}}>School</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Profession") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("Profession")}}>Profession</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Social") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I will talk with my friends about our day to day life. The sentence will vay a lot. I just want to ask basic questions to my friends, and to talk about our lives. Maybe with sentences such as "How are you?", "Would you like to go eat?", "Do you know if we have classes?". The sentence will be very different, but it will be to talk about my friends in short talks. In general, the suggestions you give me must be useful to have casual conversation with my friends. I usually talk about school, house, what I did last few weeks, or what I will do in few weeks or on vacations. Or simply of what I want to do.`)}}>Social</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Store") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("Store")}}>Store</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Restaurant") ? "teal" :"blackAlpha"} h="3rem" w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I will order food at a restaurant, with sentences similar to "I would like to order...",  "I want an...", "May I have one..."`)}}>Restaurant</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "House") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about stuff I do in my house, such as "I watched tv" or "I ate dinner with my parents" or "I will go home"`)}}>House</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Story Telling") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about things that happened before, such as  "I did my homework...", "I went to the concert...", "last month I visited my parent in Chihuahua..."`)}}>Story Telling</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "School") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about school relate stuff, such as "I have an exam tomorrow...", "I had an exam yesterday...", "I have to complete an essay on..."`)}}>School</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Profession") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("Profession")}}>Profession</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Social") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I will talk with my friends about our day to day life. The sentence will vay a lot. I just want to ask basic questions to my friends, and to talk about our lives. Maybe with sentences such as "How are you?", "Would you like to go eat?", "Do you know if we have classes?". The sentence will be very different, but it will be to talk about my friends in short talks. In general, the suggestions you give me must be useful to have casual conversation with my friends. I usually talk about school, house, what I did last few weeks, or what I will do in few weeks or on vacations. Or simply of what I want to do.`)}}>Social</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Store") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("Store")}}>Store</AccessibleButton>
+                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Restaurant") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I will order food at a restaurant, with sentences similar to "I would like to order...",  "I want an...", "May I have one..."`)}}>Restaurant</AccessibleButton>
 
                         </Flex>
                     </Flex>
@@ -301,7 +302,7 @@ export default function Keyobard(){
 
 
                 {/* Suggestions */}
-                <GridItem area="Suggestions">
+                <GridItem area="Suggestions" w="100%">
                     {
                         isGuesserSentenceSuggestion ?
                             <SentenceGuesser fontSize={fontSize} prompt={prompt} promptContent={promptContent} replaceText={setText} numberOfSentences={NUMBER_GUESSED_SENTENCES}/>

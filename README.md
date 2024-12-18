@@ -67,6 +67,12 @@ install vite
 	pnpm add -D vite
 
 
+
+## to deploy
+* Deploy using dist folder instead of public 
+  pnpm run build
+  firebase deploy --only hosting
+
 ## functionallity
 Hover for a short time to add a word
 Hover again to delete last word (which is marked)

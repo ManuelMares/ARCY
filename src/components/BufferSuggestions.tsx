@@ -103,14 +103,16 @@ export default function BufferSuggestions(props:Iprops){
     //These function replace buffer
     return(
         <Grid 
+            m="0rem"
             p="1rem"  
             h="100%" 
+            w="100%"
             gridTemplateAreas={`
                     "lines lines lines lines lines lines buttons"
                     "lines lines lines lines lines lines buttons"
                     "lines lines lines lines lines lines buttons"
                 `}
-            gridTemplateColumns={"6fr, 1fr"}
+            gridTemplateColumns={"5fr, 1fr"}
             gridTemplateRows={"1fr 1fr 1fr"}
         >
             <GridItem area={"lines"} w="100%" h="100%">
@@ -119,7 +121,7 @@ export default function BufferSuggestions(props:Iprops){
                         {
                             line1.map((word:string, i:number)=>{
                                 return(
-                                    <AccessibleButton fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l1_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} w="10rem" h="3rem">{word}</AccessibleButton>
+                                    <AccessibleButton fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l1_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} minW="8rem" >{word}</AccessibleButton>
                                 )
                             })
                         }
@@ -129,7 +131,7 @@ export default function BufferSuggestions(props:Iprops){
                             line2.map((word:string, i:number)=>{
                                 if(word){
                                     return(
-                                        <AccessibleButton fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l2_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} w="10rem" h="3rem">{word}</AccessibleButton>
+                                        <AccessibleButton fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l2_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} minW="8rem">{word}</AccessibleButton>
                                     )
                                 }else return null;
                             })
@@ -140,7 +142,7 @@ export default function BufferSuggestions(props:Iprops){
                             line3.map((word:string, i:number)=>{
                                 if(word){
                                     return(
-                                        <AccessibleButton fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l3_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} w="10rem" h="3rem">{word}</AccessibleButton>
+                                        <AccessibleButton fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l3_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} minW="8rem">{word}</AccessibleButton>
                                     )
                                 }else return null;
                             })
