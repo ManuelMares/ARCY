@@ -26,6 +26,7 @@ export default function Keyobard(){
     const [displaySettings, setDisplaySettings] = useState<string>("none");
     const [clickSpeed, setClickSpeed] = useState<number>(1200);
     const [fontSize, setFontSize] = useState<number>(17);
+    const [keyboardWidth, setKeyboardWidth] = useState<number>(70);
     // Sentence editor
     const [displaySentenceEditor, setDisplaySentenceEditor] = useState<boolean>(false);
 
@@ -41,10 +42,12 @@ export default function Keyobard(){
             setClickSpeed(1500);
     }
     function changeFontSize(change:number){
-        setFontSize(clickSpeed + change);
-        if(clickSpeed < 5)
+        console.log(change)
+        setFontSize(fontSize + change);
+        console.log(change)
+        if(fontSize < 5)
             setFontSize(5);
-        if(clickSpeed > 20)
+        if(fontSize > 20)
             setFontSize(20);
     }
 
@@ -271,7 +274,7 @@ export default function Keyobard(){
                 {/* WORD GROUPS */}
                 <GridItem area="Menu" >
                     <Flex w="100%" h="100%" justifyContent={"space-around"} flexDir={"column"} overflow={"auto"}>
-                        <Flex h="50%" p="1rem" justifyContent={"space-evenly"} alignItems={"flex-start"} gap="0.5rem" flexWrap={"wrap"}>
+                        <Flex h="50%" p="1rem" justifyContent={"space-evenly"} alignItems={"flex-start"} gap="0.5rem" flexWrap={"wrap"}  overflow={"auto"} >
                             <Text w="100%" textAlign={"left"} fontWeight={"bold"} color={"white"}>Categories</Text>
                             <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Pronouns") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Pronouns")}}>I, They...</AccessibleButton>
                             <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Modal Verbs") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Modal Verbs")}}>Can, Would...</AccessibleButton>
@@ -286,7 +289,7 @@ export default function Keyobard(){
 
 
                         {/* CONTEXT */}
-                        <Flex h="50%" p="1rem" justifyContent={"space-around"} gap="0.5rem" flexWrap={"wrap"}>
+                        <Flex h="50%" p="1rem" justifyContent={"space-around"} gap="0.5rem" flexWrap={"wrap"}  overflow={"auto"}>
                             <Text w="100%" textAlign={"left"} fontWeight={"bold"} color={"white"}>Context</Text>
                             <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "House") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about stuff I do in my house, such as "I watched tv" or "I ate dinner with my parents" or "I will go home"`)}}>House</AccessibleButton>
                             <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Story Telling") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about things that happened before, such as  "I did my homework...", "I went to the concert...", "last month I visited my parent in Chihuahua..."`)}}>Story Telling</AccessibleButton>
@@ -315,7 +318,7 @@ export default function Keyobard(){
 
                 {/* KEYBOARD */}
                 <GridItem area="Keyboard"  h="100%" bgColor={"blackAlpha.400"} borderRadius={"md"} w="100%"  justifyContent={"center"} alignItems={"center"}  justifyItems={"center"} alignContent={"center"}>
-                    <Flex  h="100%" w="70%" flexDir={"column"} flexWrap={"nowrap"} justifyContent={"center"} alignItems={"center"}  justifyItems={"center"} alignContent={"center"}>
+                    <Flex  h="100%" w={keyboardWidth+"%"} flexDir={"column"} flexWrap={"nowrap"} justifyContent={"center"} alignItems={"center"}  justifyItems={"center"} alignContent={"center"}>
                         
                         <Flex
                             w="100%"
@@ -406,7 +409,7 @@ export default function Keyobard(){
                     null
                 :
                     <Flex className="blurry-bg" position={"absolute"} top={"0vh"} left="0vw"  w="100vw" h="100vh" justifyContent={"center"} alignItems={"center"}>
-                        <Settings clickSpeed={clickSpeed} fontSize={fontSize} changeClickSpeed={changeClickSpeed} changeFontSize={changeFontSize} setDisplaySettings={setDisplaySettings} />
+                        <Settings keyboardWidth={keyboardWidth} setKeyboardWidth={setKeyboardWidth} clickSpeed={clickSpeed} fontSize={fontSize} changeClickSpeed={changeClickSpeed} changeFontSize={changeFontSize} setDisplaySettings={setDisplaySettings} />
                     </Flex>
             }
             {

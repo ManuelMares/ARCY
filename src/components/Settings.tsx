@@ -7,6 +7,8 @@ interface Iprops{
     changeClickSpeed: (change:number) => void;
     changeFontSize: (change:number) => void;
     setDisplaySettings: (value:string) => void;
+    keyboardWidth: number;
+    setKeyboardWidth: (change:number) => void;
 }
 export default function Settings(props:Iprops){
     return(
@@ -28,6 +30,12 @@ export default function Settings(props:Iprops){
                 <AccessibleButton disabled={(props.fontSize <= 5)} fontSize={props.fontSize} colorScheme="cyan" borderRadius={"3xl"}  delay={props.clickSpeed} onClick={()=>{props.changeFontSize(-0.5)}} >-</AccessibleButton>
                 <Text  w="5rem" fontSize={props.fontSize}>{props.fontSize}</Text>
                 <AccessibleButton disabled={(props.fontSize >=  20)} fontSize={props.fontSize} colorScheme="cyan" borderRadius={"3xl"} delay={props.clickSpeed} onClick={()=>{props.changeFontSize(+0.5)}} >+</AccessibleButton>
+            </Flex>
+            <Flex w="20rem" justifyContent={"center"} alignItems={"center"} my="2rem">
+                <Text textAlign={"left"} w="10rem" fontWeight={"bold"} fontSize={props.fontSize}>keyboard size</Text>
+                <AccessibleButton disabled={(props.keyboardWidth <= 50)} fontSize={props.fontSize} colorScheme="cyan" borderRadius={"3xl"}  delay={props.clickSpeed} onClick={()=>{props.setKeyboardWidth(props.keyboardWidth-5)}} >-</AccessibleButton>
+                <Text  w="5rem" fontSize={props.fontSize}>{props.keyboardWidth}</Text>
+                <AccessibleButton disabled={(props.keyboardWidth >=  100)} fontSize={props.fontSize} colorScheme="cyan" borderRadius={"3xl"} delay={props.clickSpeed} onClick={()=>{props.setKeyboardWidth(props.keyboardWidth+5)}} >+</AccessibleButton>
             </Flex>
         </Flex>
     )
