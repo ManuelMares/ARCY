@@ -4,13 +4,12 @@ import { useEffect, useState } from "react";
 import AccessibleButton from "./AccessibleButton";
 import BufferSuggestions from "./BufferSuggestions";
 import SentenceGuesser from "./SentenceGuesser";
-import Settings from "./Settings";
-import SentenceEditor from "./SentenceEditor";
 import Speak from  './Speak'
+import QWERTYKeyboard from "./QWERTYKeyboard";
+import SecondaryMenus from "./secondaryMenus/SecondaryMenus";
 
 export default function Keyobard(){
     // Variables
-    const [isInCaps, setIsInCaps] = useState<boolean>(true);
     const [text, setText] = useState<string>("");
     const [buffer, setBuffer] = useState<string>("");
     // Texts used for AI prompts
@@ -23,33 +22,16 @@ export default function Keyobard(){
     const [hasContext, setHasContext] = useState<boolean>(false);
     const [context, setContext] = useState<string>("");
     // Settings
-    const [displaySettings, setDisplaySettings] = useState<string>("none");
+    const [displaySentenceEditor, setDisplaySentenceEditor] = useState<boolean>(false);
+    const [displaySettings, setDisplaySettings] = useState<boolean>(false);
+    const [keyboardWidth, setKeyboardWidth] = useState<number>(70);
     const [clickSpeed, setClickSpeed] = useState<number>(1200);
     const [fontSize, setFontSize] = useState<number>(17);
-    const [keyboardWidth, setKeyboardWidth] = useState<number>(70);
-    // Sentence editor
-    const [displaySentenceEditor, setDisplaySentenceEditor] = useState<boolean>(false);
 
     // Guesser
     const NUMBER_GUESSED_SENTENCES = 8;
     const [isGuesserSentenceSuggestion, setIsGuesserSentenceSuggesion] = useState<boolean>(false)
     
-    function changeClickSpeed(change:number){
-        setClickSpeed(clickSpeed + change);
-        if(clickSpeed < 500)
-            setClickSpeed(500);
-        if(clickSpeed > 1500)
-            setClickSpeed(1500);
-    }
-    function changeFontSize(change:number){
-        console.log(change)
-        setFontSize(fontSize + change);
-        console.log(change)
-        if(fontSize < 5)
-            setFontSize(5);
-        if(fontSize > 20)
-            setFontSize(20);
-    }
 
     useEffect(() => {
         setIsGuesserSentenceSuggesion(false);
@@ -138,11 +120,6 @@ export default function Keyobard(){
         setIsGuesserSentenceSuggesion(true);
     }
 
-    /*    Append the buffer and a given character to the text    */
-    function addToBufferAndCloseIt(postfix:string){
-        setText(text + buffer + postfix);
-        setBuffer("")
-    }
 
     /*    Drops buffer and adds given word to text    */
     function replaceBuffer(word:string){
@@ -163,29 +140,6 @@ export default function Keyobard(){
 
     }
 
-    /*    Adds the buffer making sure there is no space between buffer and previous word    */
-    function prePrendBuffer(symbol:string){
-        if(buffer === ""){
-            const temp = text.replace(/\s+$/, '');
-            setText(temp + symbol);
-        }else{
-            const newBuffer = buffer.replace(/\s+$/, '') + symbol;
-            setBuffer("");
-            setText(text + newBuffer);
-        }
-    }
-    /*    Adds the buffer making sure there is no space between buffer and previous word    */
-    function addLineEnd(symbol:string){
-        if(buffer === ""){
-            const temp = text.replace(/\s+$/, '');
-            setText(temp + symbol);
-        }else{
-            const newBuffer = buffer.replace(/\s+$/, '') + symbol;
-            setBuffer("");
-            setText(text + newBuffer);
-        }
-        setIsInCaps(true);
-    }
 
     /*  Remove last word in text */
     function removeLastWord(){
@@ -213,18 +167,8 @@ export default function Keyobard(){
         setBuffer(word);
 
         setDisplaySentenceEditor(true);
-        console.log(button);
     }
-
-    function deleteCharacter() {
-        if(buffer !== ""){
-            setBuffer(buffer.slice(0, -1));
-            return;
-        }
-        else if(text !== ""){
-            setText(text.slice(0, -1));
-        }
-    }
+    
 
     return(
         <>
@@ -241,7 +185,6 @@ export default function Keyobard(){
                 w="100vw"
                 bgColor="blackAlpha.700" 
             >
-
 
                 {/* TEXT */}
                 <GridItem area="Text" bgColor="white" p="1rem" m="0" w="100%" h="100%">
@@ -262,14 +205,11 @@ export default function Keyobard(){
                     <Flex flexDir={"column"} w="100%" h="100%" m="0" p="0" justifyContent={"space-around"}>
                         <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{removeLastWord()}}>Delete word</AccessibleButton>
                         <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setText(""); setBuffer("")}}>Clear</AccessibleButton>
-                        <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setDisplaySettings("flex")}}>Settings</AccessibleButton>
+                        <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setDisplaySettings(true)}}>Settings</AccessibleButton>
                         <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{guessSentence()}}>Guesser</AccessibleButton>
                         <Speak fontSize={fontSize} delay={clickSpeed} colorScheme="green" text={text} />
                     </Flex>                    
                 </GridItem>
-
-
-
 
                 {/* WORD GROUPS */}
                 <GridItem area="Menu" >
@@ -303,7 +243,6 @@ export default function Keyobard(){
                     </Flex>
                 </GridItem>
 
-
                 {/* Suggestions */}
                 <GridItem area="Suggestions" w="100%">
                     {
@@ -314,114 +253,34 @@ export default function Keyobard(){
                     }
                 </GridItem>
 
-
-
                 {/* KEYBOARD */}
-                <GridItem area="Keyboard"  h="100%" bgColor={"blackAlpha.400"} borderRadius={"md"} w="100%"  justifyContent={"center"} alignItems={"center"}  justifyItems={"center"} alignContent={"center"}>
-                    <Flex  h="100%" w={keyboardWidth+"%"} flexDir={"column"} flexWrap={"nowrap"} justifyContent={"center"} alignItems={"center"}  justifyItems={"center"} alignContent={"center"}>
-                        
-                        <Flex
-                            w="100%"
-                            h="100%"
-                            alignItems={"center"}
-                            justifyContent={"space-around"}
-                            >
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "Q":"q")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "Q":"q"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "W":"w")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "W":"w"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "E":"e")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "E":"e"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "R":"r")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "R":"r"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "T":"t")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "T":"t"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "Y":"y")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "Y":"y"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "U":"u")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "U":"u"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "I":"i")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "I":"i"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "O":"o")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "O":"o"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "P":"p")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "P":"p"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{deleteCharacter()}} w="8rem" h="5rem">{"<-"}</AccessibleButton>
-                        </Flex>
-                        <Flex
-                            w="100%"
-                            h="100%"
-                            alignItems={"center"}
-                            justifyContent={"space-around"}
-                            >
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setIsInCaps(true)}} w="5rem" h="5rem">CAP</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "A":"a")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "A":"a"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "S":"s")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "S":"s"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "D":"d")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "D":"d"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "F":"f")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "F":"f"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "G":"g")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "G":"g"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "H":"h")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "H":"h"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "J":"j")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "J":"j"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "K":"k")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "K":"k"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "L":"l")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "L":"l"}</AccessibleButton>
-                        </Flex>
-                        <Flex
-                            w="100%"
-                            h="100%"
-                            alignItems={"center"}
-                            justifyContent={"space-around"}
-                            >
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "Z":"z")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "Z":"z"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "X":"x")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "X":"x"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "C":"c")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "C":"c"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "V":"v")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "V":"v"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "B":"b")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "B":"b"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "N":"n")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "N":"n"}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{setBuffer(buffer + (isInCaps ? "M":"m")); setIsInCaps(false)}} w="5rem" h="5rem">{isInCaps ? "M":"m"}</AccessibleButton>
-                        </Flex>
-                    </Flex>
-                </GridItem>
-
-
-                    {/* PUNCTUATION */}
-                <GridItem area="punctuation" bgColor="blackAlpha.500" h="100%"   justifyContent={"center"} alignItems={"center"}  justifyItems={"center"} alignContent={"center"} >
-                    <Flex  h="100%" w="70%" flexDir={"column"} justifyContent={"center"}  alignItems={"center"}>
-                    {/* <Flex  h="100%" flexDir={"column"} justifyContent={"space-around"}> */}
-                        
-                        <Flex
-                            w="100%"
-                            h="100%"
-                            alignItems={"center"}
-                            justifyContent={"space-around"}
-                            >
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{addLineEnd(". ")}} w="5rem" h="5rem">.</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{prePrendBuffer(", ")}} w="5rem" h="5rem">,</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{addLineEnd("! ")}} w="5rem" h="5rem">!</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{addLineEnd("? ")}} w="5rem" h="5rem">?</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{addToBufferAndCloseIt(" ")}} w="15rem" h="5rem"></AccessibleButton> 
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{prePrendBuffer(": ")}} w="5rem" h="5rem">:</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{prePrendBuffer("; ")}} w="5rem" h="5rem">;</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{prePrendBuffer("\"")}} w="5rem" h="5rem">"</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{prePrendBuffer("'")}} w="5rem" h="5rem">'</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{prePrendBuffer("(")}} w="5rem" h="5rem">{"("}</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme="blackAlpha" delay={clickSpeed} onClick={()=>{prePrendBuffer(") ")}} w="5rem" h="5rem">{")"}</AccessibleButton>
-                        </Flex>
-                    </Flex>
-                </GridItem>
+                <QWERTYKeyboard 
+                    fontSize={fontSize} clickSpeed={clickSpeed} keyboardWidth={keyboardWidth} 
+                    buffer={buffer} setBuffer={setBuffer} 
+                    text={text} setText={setText}
+                />
             </Grid>
 
 
-                {/* DRAWER SETTINGS */}
-
-            {
-                displaySettings === "none"
-                ?
-                    null
-                :
-                    <Flex className="blurry-bg" position={"absolute"} top={"0vh"} left="0vw"  w="100vw" h="100vh" justifyContent={"center"} alignItems={"center"}>
-                        <Settings keyboardWidth={keyboardWidth} setKeyboardWidth={setKeyboardWidth} clickSpeed={clickSpeed} fontSize={fontSize} changeClickSpeed={changeClickSpeed} changeFontSize={changeFontSize} setDisplaySettings={setDisplaySettings} />
-                    </Flex>
-            }
-            {
-                displaySentenceEditor
-                ?
-                    <Flex className="blurry-bg" position={"absolute"} top={"0vh"} left="0vw"  w="100vw" h="30vh" justifyContent={"center"} alignItems={"center"}>
-                        <SentenceEditor setText={setText} setPostSentence={setPostSentence} setBuffer={setBuffer} clickSpeed={clickSpeed} fontSize={fontSize} buffer={buffer} preSentence={preSentence} postSentence={postSentence} setDisplaySentenceEditor={setDisplaySentenceEditor} />
-                    </Flex>
-                :
-                    null
-            }
-
+            {/* SECONDARY MENUS */}
+            <SecondaryMenus
+                displaySentenceEditor={displaySentenceEditor}
+                displaySettings={displaySettings}
+                keyboardWidth={keyboardWidth}
+                postSentence={postSentence}
+                preSentence={preSentence}
+                clickSpeed={clickSpeed}
+                fontSize={fontSize}
+                buffer={buffer}
+                setDisplaySentenceEditor={setDisplaySentenceEditor}
+                setDisplaySettings={setDisplaySettings}
+                setKeyboardWidth={setKeyboardWidth}
+                setPostSentence={setPostSentence}
+                setClickSpeed={setClickSpeed}
+                setFontSize={setFontSize}
+                setBuffer={setBuffer}
+                setText={setText}
+            />
 
         </>
     )

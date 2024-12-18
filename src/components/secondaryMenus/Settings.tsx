@@ -1,21 +1,21 @@
 import { Divider, Flex, Text } from "@chakra-ui/react";
-import AccessibleButton from "./AccessibleButton";
+import AccessibleButton from "../AccessibleButton";
 
 interface Iprops{
     clickSpeed: number;
     fontSize: number;
     changeClickSpeed: (change:number) => void;
     changeFontSize: (change:number) => void;
-    setDisplaySettings: (value:string) => void;
+    setDisplaySettings: (value:boolean) => void;
     keyboardWidth: number;
     setKeyboardWidth: (change:number) => void;
 }
 export default function Settings(props:Iprops){
     return(
         <Flex flexDir={"column"} w="80vw" h="80vh"  bgColor="white" borderRadius={"lg"} p="5rem">
-            <Flex justifyContent={"space-between"} p="0" m="0" w="100%">
+            <Flex justifyContent={""} gap={"2rem"} p="0" m="0" w="100%">
+                <AccessibleButton colorScheme="red" fontSize={props.fontSize} delay={props.clickSpeed} onClick={()=>{props.setDisplaySettings(false)}}>X</AccessibleButton>
                 <Text fontSize={props.fontSize+3} fontWeight={"bold"}>Settings</Text>
-                <AccessibleButton colorScheme="red" fontSize={props.fontSize} delay={props.clickSpeed} onClick={()=>{props.setDisplaySettings("none")}}>X</AccessibleButton>
             </Flex>
             <Divider my="3rem"></Divider>
             {/* Click speed */}
