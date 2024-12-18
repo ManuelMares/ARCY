@@ -75,7 +75,8 @@ install vite
 
 ## functionallity
 Hover for a short time to add a word
-Hover again to delete last word (which is marked)
+we use popular-english-words for list of words to autocomplete
+
 
 
 # Ideas

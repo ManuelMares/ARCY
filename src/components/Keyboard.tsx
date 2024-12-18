@@ -7,6 +7,19 @@ import SentenceGuesser from "./SentenceGuesser";
 import Speak from  './Speak'
 import QWERTYKeyboard from "./QWERTYKeyboard";
 import SecondaryMenus from "./secondaryMenus/SecondaryMenus";
+import Fuse from 'fuse.js';
+import {words} from 'popular-english-words'
+
+
+type WordItem = {
+    word: string;
+  };
+  
+  type FuseResult<T> = {
+    item: T;
+    // You can add other properties that FuseResult might have, like score, matches, etc.
+  };
+  
 
 export default function Keyobard(){
     // Variables
@@ -32,6 +45,7 @@ export default function Keyobard(){
     const NUMBER_GUESSED_SENTENCES = 8;
     const [isGuesserSentenceSuggestion, setIsGuesserSentenceSuggesion] = useState<boolean>(false)
     
+
 
     useEffect(() => {
         setIsGuesserSentenceSuggesion(false);
@@ -155,6 +169,7 @@ export default function Keyobard(){
 
     /*Edit word*/
     function editWord(button:HTMLButtonElement, wordIndex:number){
+        console.log(button);
         const words = text.split(' '); // Split the text into words
         if(wordIndex == 0 || wordIndex == words.length -2)
             return;
@@ -169,6 +184,33 @@ export default function Keyobard(){
         setDisplaySentenceEditor(true);
     }
     
+
+
+    //--------------------------------------------------------------------------------------
+    // Autocompleter
+    //--------------------------------------------------------------------------------------
+    // List of words to autocomplete
+    const wordList = words.getMostPopular(1000);
+    
+    // Initialize Fuse with options
+    const options = {
+      includeScore: true,
+      threshold: 0.3, // Lower this number for stricter matching
+      keys: ['word']
+    };
+    
+    const fuse = new Fuse(wordList.map((word:string) => ({ word })), options);
+    
+    // Function to get matches
+    const getMatches = (input: string): string[] => {
+        const results: FuseResult<WordItem>[] = fuse.search(input);
+        return results.map((result: FuseResult<WordItem>) => result.item.word);
+    };
+      
+    
+    // Example usage
+    const response = getMatches("he");
+    console.log(response); 
 
     return(
         <>

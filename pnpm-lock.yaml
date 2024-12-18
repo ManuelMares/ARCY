@@ -29,12 +29,15 @@ importers:
       framer-motion:
         specifier: ^11.9.0
         version: 11.9.0(@emotion/is-prop-valid@1.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      fuse.js:
+        specifier: ^7.0.0
+        version: 7.0.0
       lucide-react:
         specifier: ^0.460.0
         version: 0.460.0(react@18.3.1)
-      predictionary:
-        specifier: ^1.3.1
-        version: 1.3.1
+      popular-english-words:
+        specifier: ^1.0.2
+        version: 1.0.2
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -1182,6 +1185,10 @@ packages:
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
 
+  fuse.js@7.0.0:
+    resolution: {integrity: sha512-14F4hBIxqKvD4Zz/XjDc3y94mNZN6pRv3U13Udo0lNLCWRBUsrMv2xwcF/y/Z5sV6+FQW+/ow68cHpm4sunt8Q==}
+    engines: {node: '>=10'}
+
   gaxios@6.7.1:
     resolution: {integrity: sha512-LDODD4TMYx7XXdpwxAVRAIAuB0bzv0s+ywFonY46k126qzQHT9ygyoa9tncmOiQmmDrik65UYsEkv3lbfqQ3yQ==}
     engines: {node: '>=14'}
@@ -1494,12 +1501,12 @@ packages:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
 
+  popular-english-words@1.0.2:
+    resolution: {integrity: sha512-vQiCBURYdNZP8yIvNQ76fOP5PKUs3tbv1LbQz5hbOVtK6deE8WBkJSYhn1asOqXIiT/iwrQvrwEfNsVrFuk7mw==}
+
   postcss@8.4.47:
     resolution: {integrity: sha512-56rxCq7G/XfB4EkXq9Egn5GCqugWvDFjafDOThIdMBsI15iqPqR5r15TfSr1YPYeEI19YeaXMCbY6u88Y76GLQ==}
     engines: {node: ^10 || ^12 || >=14}
-
-  predictionary@1.3.1:
-    resolution: {integrity: sha512-ZUODjDIQKpHBiiJpa5Z3Vs8NssvTeMY31rCMVBnSGFLQFv/UkZtitsbXnnh07khUY96NPlF8MiUMShK5ahsAZA==}
 
   predictionary@1.6.0:
     resolution: {integrity: sha512-o2MzHtkb533J0optP+aZ6EcHeuYvg1bGyqtoK8Q+3sXIpx1mzruAzGtP/ZCFo5+uARnLdjwDGYOj0QTiaFNHDQ==}
@@ -3086,6 +3093,8 @@ snapshots:
 
   function-bind@1.1.2: {}
 
+  fuse.js@7.0.0: {}
+
   gaxios@6.7.1:
     dependencies:
       extend: 3.0.2
@@ -3387,13 +3396,13 @@ snapshots:
 
   picomatch@2.3.1: {}
 
+  popular-english-words@1.0.2: {}
+
   postcss@8.4.47:
     dependencies:
       nanoid: 3.3.7
       picocolors: 1.1.0
       source-map-js: 1.2.1
-
-  predictionary@1.3.1: {}
 
   predictionary@1.6.0: {}
 
