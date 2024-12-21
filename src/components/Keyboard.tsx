@@ -8,19 +8,34 @@ import Speak from  './Speak'
 import QWERTYKeyboard from "./QWERTYKeyboard";
 import SecondaryMenus from "./secondaryMenus/SecondaryMenus";
 import Fuse from 'fuse.js';
-import {words} from 'popular-english-words'
+import {words} from 'popular-english-words';
+import { createNewSession } from "./firebase";
+import { ButtonTypeEnum } from "./ENUMS/ButtonTypeEnum";
 
 
 type WordItem = {
     word: string;
-  };
-  
-  type FuseResult<T> = {
+};
+
+type FuseResult<T> = {
     item: T;
     // You can add other properties that FuseResult might have, like score, matches, etc.
-  };
-  
+};
 
+
+const CONTEXT_PROMPTS = {
+    "House":            "I am going to talk about stuff I do in my house, such as -I watched tv- or -I ate dinner with my parents- or -I will go home-",
+    "Story Telling":    `I am going to talk about things that happened before, such as  "I did my homework...", "I went to the concert...", "last month I visited my parent in Chihuahua..."`,
+    "School":           `I am going to talk about school relate stuff, such as "I have an exam tomorrow...", "I had an exam yesterday...", "I have to complete an essay on..."`,
+    "Profession":       `Profession`,
+    "Social":           `I will talk with my friends about our day to day life. The sentence will vay a lot. I just want to ask basic questions to my friends, and to talk about our lives. 
+                        Maybe with sentences such as "How are you?", "Would you like to go eat?", "Do you know if we have classes?". 
+                        The sentence will be very different, but it will be to talk about my friends in short talks. 
+                        In general, the suggestions you give me must be useful to have casual conversation with my friends. 
+                        I usually talk about school, house, what I did last few weeks, or what I will do in few weeks or on vacations. Or simply of what I want to do.`,
+    "Store":            `Store`,
+    "Restaurant":       `I will order food at a restaurant, with sentences similar to "I would like to order...",  "I want an...", "May I have one..."`,
+}
 export default function Keyobard(){
     // Variables
     const [text, setText] = useState<string>("");
@@ -41,6 +56,44 @@ export default function Keyobard(){
     const [clickSpeed, setClickSpeed] = useState<number>(1200);
     const [fontSize, setFontSize] = useState<number>(17);
 
+
+    //--------------------------------------------------------------------------------------
+    // Start new session log in DB
+    //--------------------------------------------------------------------------------------
+    // Use to indicate session logs
+    const [SESSION_TIME_STAMP_STRING,] = useState<string>(formatDate(new Date())) 
+    // Create new session log
+    useEffect(()=>{
+        createNewSession(SESSION_TIME_STAMP_STRING);
+    },[]);
+
+    function formatDate(date: Date){
+        // Get parts of the date
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        
+        let hours = date.getHours();
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        
+        // Determine AM or PM
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        
+        const formattedTime = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+        return `${year}-${month}-${day}, ${formattedTime}`;
+    };
+
+
+
+
+
+
+    //--------------------------------------------------------------------------------------
+    //
+    //--------------------------------------------------------------------------------------
     // Guesser
     const NUMBER_GUESSED_SENTENCES = 8;
     const [isGuesserSentenceSuggestion, setIsGuesserSentenceSuggesion] = useState<boolean>(false)
@@ -210,7 +263,6 @@ export default function Keyobard(){
     
     // Example usage
     const response = getMatches("he");
-    console.log(response); 
 
     return(
         <>
@@ -234,21 +286,21 @@ export default function Keyobard(){
                         {
                             text.split(" ").map((word:string, index:number) => {
                                 return(
-                                    <AccessibleButton fontSize={fontSize} keyId={index} key={"key"+index} minW={"0.2rem"} m="0" p="0.2rem" bg="white" delay={clickSpeed} onCustomClick={editWord}>{word}</AccessibleButton>
+                                    <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} keyId={index} key={"key"+index} minW={"0.2rem"} m="0" p="0.2rem" bg="white" delay={clickSpeed} onCustomClick={editWord}>{word}</AccessibleButton>
                                 )
                             })
                         }
-                        <AccessibleButton fontSize={fontSize} minW={"0.5rem"} p="0" m="0" bgColor="teal" delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>{buffer}</AccessibleButton>
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} minW={"0.5rem"} p="0" m="0" bgColor="teal" delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>{buffer}</AccessibleButton>
                     </Flex>
                 </GridItem>
                 
                 {/* TEXT BUTTONS */}
                 <GridItem area="Buttons" bgColor="white" m="0" p="1rem" w="100%" h="100%">
                     <Flex flexDir={"column"} w="100%" h="100%" m="0" p="0" justifyContent={"space-around"}>
-                        <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{removeLastWord()}}>Delete word</AccessibleButton>
-                        <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setText(""); setBuffer("")}}>Clear</AccessibleButton>
-                        <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setDisplaySettings(true)}}>Settings</AccessibleButton>
-                        <AccessibleButton fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{guessSentence()}}>Guesser</AccessibleButton>
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{removeLastWord()}}>Delete word</AccessibleButton>
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setText(""); setBuffer("")}}>Clear</AccessibleButton>
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setDisplaySettings(true)}}>Settings</AccessibleButton>
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{guessSentence()}}>Guesser</AccessibleButton>
                         <Speak fontSize={fontSize} delay={clickSpeed} colorScheme="green" text={text} />
                     </Flex>                    
                 </GridItem>
@@ -258,28 +310,31 @@ export default function Keyobard(){
                     <Flex w="100%" h="100%" justifyContent={"space-around"} flexDir={"column"} overflow={"auto"}>
                         <Flex h="50%" p="1rem" justifyContent={"space-evenly"} alignItems={"flex-start"} gap="0.5rem" flexWrap={"wrap"}  overflow={"auto"} >
                             <Text w="100%" textAlign={"left"} fontWeight={"bold"} color={"white"}>Categories</Text>
-                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Pronouns") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Pronouns")}}>I, They...</AccessibleButton>
-                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Modal Verbs") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Modal Verbs")}}>Can, Would...</AccessibleButton>
-                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Articles") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Articles")}}>The, An...</AccessibleButton>
-                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Adjectives") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Adjectives")}}>Adjectives</AccessibleButton>
-                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Verbs") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Verbs")}}>Verbs</AccessibleButton>
-                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Adverbs") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Adverbs")}}>Adverbs</AccessibleButton>
-                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Prepositions") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Prepositions")}}>On, Under....</AccessibleButton>
-                            <AccessibleButton my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Conjunctions") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Conjunctions")}}>For, But...</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Pronouns") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Pronouns")}}>I, They...</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Modal Verbs") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Modal Verbs")}}>Can, Would...</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Articles") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Articles")}}>The, An...</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Adjectives") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Adjectives")}}>Adjectives</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Verbs") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Verbs")}}>Verbs</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Adverbs") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Adverbs")}}>Adverbs</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Prepositions") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Prepositions")}}>On, Under....</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Conjunctions") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Conjunctions")}}>For, But...</AccessibleButton>
                             {/* <AccessibleButton delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>Numbers</AccessibleButton> */}
                         </Flex>
+
+
+
 
 
                         {/* CONTEXT */}
                         <Flex h="50%" p="1rem" justifyContent={"space-around"} gap="0.5rem" flexWrap={"wrap"}  overflow={"auto"}>
                             <Text w="100%" textAlign={"left"} fontWeight={"bold"} color={"white"}>Context</Text>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "House") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about stuff I do in my house, such as "I watched tv" or "I ate dinner with my parents" or "I will go home"`)}}>House</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Story Telling") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about things that happened before, such as  "I did my homework...", "I went to the concert...", "last month I visited my parent in Chihuahua..."`)}}>Story Telling</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "School") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I am going to talk about school relate stuff, such as "I have an exam tomorrow...", "I had an exam yesterday...", "I have to complete an essay on..."`)}}>School</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Profession") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("Profession")}}>Profession</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Social") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I will talk with my friends about our day to day life. The sentence will vay a lot. I just want to ask basic questions to my friends, and to talk about our lives. Maybe with sentences such as "How are you?", "Would you like to go eat?", "Do you know if we have classes?". The sentence will be very different, but it will be to talk about my friends in short talks. In general, the suggestions you give me must be useful to have casual conversation with my friends. I usually talk about school, house, what I did last few weeks, or what I will do in few weeks or on vacations. Or simply of what I want to do.`)}}>Social</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Store") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt("Store")}}>Store</AccessibleButton>
-                            <AccessibleButton fontSize={fontSize} colorScheme={(hasContext && context === "Restaurant") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{addPromptContenxt(`I will order food at a restaurant, with sentences similar to "I would like to order...",  "I want an...", "May I have one..."`)}}>Restaurant</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === "House")           ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["House"])           }}>    House</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === "Story Telling")   ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["Story Telling"])   }}>    Story Telling</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === "School")          ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["School"])          }}>    School</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === "Profession")      ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["Profession"])      }}>    Profession</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === "Social")          ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["Social"])          }}>    Social</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === "Store")           ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["Store"])           }}>    Store</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === "Restaurant")      ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["Restaurant"])      }}>    Restaurant</AccessibleButton>
 
                         </Flex>
                     </Flex>
@@ -289,9 +344,9 @@ export default function Keyobard(){
                 <GridItem area="Suggestions" w="100%">
                     {
                         isGuesserSentenceSuggestion ?
-                            <SentenceGuesser fontSize={fontSize} prompt={prompt} promptContent={promptContent} replaceText={setText} numberOfSentences={NUMBER_GUESSED_SENTENCES}/>
+                            <SentenceGuesser session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} prompt={prompt} promptContent={promptContent} replaceText={setText} numberOfSentences={NUMBER_GUESSED_SENTENCES}/>
                         :
-                            <BufferSuggestions fontSize={fontSize} prompt={prompt} promptContent={promptContent} replaceBuffer={replaceBuffer} isReplacingBuffer={isReplacingBuffer}/>
+                            <BufferSuggestions session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} prompt={prompt} promptContent={promptContent} replaceBuffer={replaceBuffer} isReplacingBuffer={isReplacingBuffer}/>
                     }
                 </GridItem>
 
@@ -300,6 +355,7 @@ export default function Keyobard(){
                     fontSize={fontSize} clickSpeed={clickSpeed} keyboardWidth={keyboardWidth} 
                     buffer={buffer} setBuffer={setBuffer} 
                     text={text} setText={setText}
+                    session_time_stamp_string={SESSION_TIME_STAMP_STRING} 
                 />
             </Grid>
 

@@ -1,6 +1,7 @@
 import { Flex, GridItem } from "@chakra-ui/react";
 import AccessibleButton from "./AccessibleButton";
 import { useState } from "react";
+import { ButtonTypeEnum } from "./ENUMS/ButtonTypeEnum";
 
 interface IProps{
     fontSize: number;
@@ -10,6 +11,7 @@ interface IProps{
     text: string;
     setText: (text:string) => void;
     setBuffer: (text:string) => void;
+    session_time_stamp_string: string;
 }
 enum ENUM_SYMBOL_LEVELS { 
     NORMAL = "normal", 
@@ -50,6 +52,7 @@ const KEY_SYMBOLS = [
 
 export default function QWERTYKeyboard(props: IProps){
     const [symbolLevel, setSymbolLevel] = useState<ENUM_SYMBOL_LEVELS>(ENUM_SYMBOL_LEVELS.NORMAL);
+    const BUTTON_TYPE = ButtonTypeEnum.QWERTY_KEYBOARD;
     
     /*    Append the buffer and a given character to the text    */
     function addToBufferAndCloseIt(postfix:string){
@@ -92,6 +95,11 @@ export default function QWERTYKeyboard(props: IProps){
             props.setText(props.text.slice(0, -1));
         }
     }
+
+    /* Adds a character to the buffer*/
+    function addToBuffer(char:string){
+        props.setBuffer(props.buffer + char)
+    }
     
     return(
         <>
@@ -104,17 +112,17 @@ export default function QWERTYKeyboard(props: IProps){
                         alignItems={"center"}
                         justifyContent={"space-around"}
                         >
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[0][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[0][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[1][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[1][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[2][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[2][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[3][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[3][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[4][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[4][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[5][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[5][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[6][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[6][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[7][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[7][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[8][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[8][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[9][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[9][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{deleteCharacter()}} w="8rem" h="5rem">{"<-"}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[0][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[0][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[1][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[1][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[2][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[2][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[3][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[3][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[4][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[4][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[5][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[5][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[6][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[6][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[7][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[7][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[8][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[8][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[9][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[9][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{deleteCharacter()}} w="8rem" h="5rem">{"<-"}</AccessibleButton>
                     </Flex>
                     <Flex
                         w="100%"
@@ -122,18 +130,17 @@ export default function QWERTYKeyboard(props: IProps){
                         alignItems={"center"}
                         justifyContent={"space-around"}
                         >
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{setSymbolLevel(symbolLevel != ENUM_SYMBOL_LEVELS.CAPITAL ? ENUM_SYMBOL_LEVELS.CAPITAL : ENUM_SYMBOL_LEVELS.NORMAL)}} w="8rem" h="5rem">CAP</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{setSymbolLevel(symbolLevel != ENUM_SYMBOL_LEVELS.CAPITAL ? ENUM_SYMBOL_LEVELS.CAPITAL : ENUM_SYMBOL_LEVELS.NORMAL)}} w="8rem" h="5rem">CAP</AccessibleButton>
                         
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[10][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[10][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[11][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[11][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[12][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[12][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[13][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[13][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[14][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[14][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[15][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[15][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[16][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[16][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[17][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[17][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[18][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[18][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[19][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[19][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[10][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[10][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[11][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[11][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[12][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[12][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[13][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[13][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[14][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[14][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[15][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[15][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[16][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[16][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[17][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[17][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[18][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[18][symbolLevel]}</AccessibleButton>
 
                     </Flex>
                     <Flex
@@ -143,16 +150,17 @@ export default function QWERTYKeyboard(props: IProps){
                         justifyContent={"space-around"}
                         >
                             
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{setSymbolLevel(symbolLevel != ENUM_SYMBOL_LEVELS.SHIFT ? ENUM_SYMBOL_LEVELS.SHIFT : ENUM_SYMBOL_LEVELS.NORMAL)}} w="8rem" h="5rem">Symbolic</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{setSymbolLevel(symbolLevel != ENUM_SYMBOL_LEVELS.SHIFT ? ENUM_SYMBOL_LEVELS.SHIFT : ENUM_SYMBOL_LEVELS.NORMAL)}} w="8rem" h="5rem">Symbolic</AccessibleButton>
                         
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[20][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[20][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[21][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[21][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[22][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[22][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[23][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[23][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[24][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[24][symbolLevel]}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{props.setBuffer(KEY_SYMBOLS[25][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[25][symbolLevel]}</AccessibleButton>                        
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[19][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[19][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[20][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[20][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[21][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[21][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[22][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[22][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[23][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[23][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[24][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[24][symbolLevel]}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[25][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[25][symbolLevel]}</AccessibleButton>                        
                         
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{setSymbolLevel(symbolLevel != ENUM_SYMBOL_LEVELS.NUMBER ? ENUM_SYMBOL_LEVELS.NUMBER : ENUM_SYMBOL_LEVELS.NORMAL)}} w="8rem" h="5rem">number</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{setSymbolLevel(symbolLevel != ENUM_SYMBOL_LEVELS.NUMBER ? ENUM_SYMBOL_LEVELS.NUMBER : ENUM_SYMBOL_LEVELS.NORMAL)}} w="8rem" h="5rem">number</AccessibleButton>
                     </Flex>
                 </Flex>
             </GridItem>
@@ -169,17 +177,17 @@ export default function QWERTYKeyboard(props: IProps){
                         alignItems={"center"}
                         justifyContent={"space-around"}
                         >
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addLineEnd(". "); setSymbolLevel(ENUM_SYMBOL_LEVELS.CAPITAL);}} w="5rem" h="5rem">.</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer(", ")}} w="5rem" h="5rem">,</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addLineEnd("! "); setSymbolLevel(ENUM_SYMBOL_LEVELS.CAPITAL);}} w="5rem" h="5rem">!</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addLineEnd("? "); setSymbolLevel(ENUM_SYMBOL_LEVELS.CAPITAL);}} w="5rem" h="5rem">?</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBufferAndCloseIt(" ")}} w="15rem" h="5rem"></AccessibleButton> 
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer(": ")}} w="5rem" h="5rem">:</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer("; ")}} w="5rem" h="5rem">;</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer("\"")}} w="5rem" h="5rem">"</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer("'")}} w="5rem" h="5rem">'</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer("(")}} w="5rem" h="5rem">{"("}</AccessibleButton>
-                        <AccessibleButton fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer(") ")}} w="5rem" h="5rem">{")"}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addLineEnd(". "); setSymbolLevel(ENUM_SYMBOL_LEVELS.CAPITAL);}} w="5rem" h="5rem">.</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer(", ")}} w="5rem" h="5rem">,</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addLineEnd("! "); setSymbolLevel(ENUM_SYMBOL_LEVELS.CAPITAL);}} w="5rem" h="5rem">!</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addLineEnd("? "); setSymbolLevel(ENUM_SYMBOL_LEVELS.CAPITAL);}} w="5rem" h="5rem">?</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBufferAndCloseIt(" ")}} w="15rem" h="5rem"> [ SPACE ]</AccessibleButton> 
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer(": ")}} w="5rem" h="5rem">:</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer("; ")}} w="5rem" h="5rem">;</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer("\"")}} w="5rem" h="5rem">"</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer("'")}} w="5rem" h="5rem">'</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer("(")}} w="5rem" h="5rem">{"("}</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{prePendBuffer(") ")}} w="5rem" h="5rem">{")"}</AccessibleButton>
                     </Flex>
                 </Flex>
             </GridItem>

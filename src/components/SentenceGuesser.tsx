@@ -2,6 +2,7 @@ import { Flex, Grid, GridItem } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import AccessibleButton from "./AccessibleButton";
+import { ButtonTypeEnum } from "./ENUMS/ButtonTypeEnum";
 
 interface Iprops{
     prompt: string
@@ -9,8 +10,10 @@ interface Iprops{
     replaceText: (string:string) => void;
     fontSize: number;
     numberOfSentences: number
+    session_time_stamp_string: string;
 }
 export default function SentenceGuesser(props:Iprops){
+    const BUTTON_TYPE = ButtonTypeEnum.SUGGESTION;
     const OPEN_AI_KEY = import.meta.env.VITE_REACT_OPENAI_API_KEY;
     const apiUrl = 'https://api.openai.com/v1/chat/completions';
     const [sentences, setSentences] = useState<string[]>([]);
@@ -77,7 +80,7 @@ export default function SentenceGuesser(props:Iprops){
                         {
                             sentences.map((sentence:string, i:number)=>{
                                 return(
-                                    <AccessibleButton fontSize={props.fontSize} colorScheme="cyan"  key={"l1_"+i} delay={500} onClick={()=>{props.replaceText(sentence)}} w="45%" h="3rem">{sentence}</AccessibleButton>
+                                    <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="cyan"  key={"l1_"+i} delay={500} onClick={()=>{props.replaceText(sentence)}} w="45%" h="3rem">{sentence}</AccessibleButton>
                                 )
                             })
                         }
@@ -85,7 +88,7 @@ export default function SentenceGuesser(props:Iprops){
                 </Flex>
             </GridItem>
             <GridItem area={"buttons"} w="100%" h="100%">
-                <AccessibleButton fontSize={props.fontSize} delay={500} onClick={()=>{getSuggestions()}}>Refresh</AccessibleButton>
+                <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string}  fontSize={props.fontSize} delay={500} onClick={()=>{getSuggestions()}}>Refresh</AccessibleButton>
             </GridItem>
         </Grid>
 

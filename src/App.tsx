@@ -1,12 +1,15 @@
-// import Trainer from './components/Trainer';
 import './App.css'
 import Keyboard from './components/Keyboard'
+import useActivityLogger from './hooks/useActivityLogger';
 
 function App() {
+  useActivityLogger();
+  
+
   return (
     <>
      {/* <Trainer/> */}
-     <Keyboard/>
+      <Keyboard/>
     </>
   )
 }

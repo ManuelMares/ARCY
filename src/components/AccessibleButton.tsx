@@ -1,11 +1,17 @@
 import { Button, ButtonProps } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
+import { registerActivity } from './firebase';
+import { ButtonTypeEnum } from './ENUMS/ButtonTypeEnum';
+import { IActivityLog } from './Interfaces/IActivityLog';
+// import { IActivityLog, registerActivity } from './firebase';
 
 interface AccessibleButtonProps extends ButtonProps {
     onClick?: () => void;                                       // Function triggered with no parameter
     onCustomClick?: (button: HTMLButtonElement, keyId:number) => void;        // Function triggered with Button itself as parameter. usage: function editWord(button:HTMLButtonElement)
     delay: number;
     keyId?: number;
+    session_time_stamp_string: string;
+    buttonType: ButtonTypeEnum;
 }
 
 export default function AccessibleButton(props: AccessibleButtonProps) {
@@ -15,6 +21,26 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
     const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [clickTriggered, setClickTriggered] = useState(false);
+
+    function storeActivity(){
+        if(!props.session_time_stamp_string)
+            return;
+
+        const activityLog:IActivityLog = {
+            "button": props.children as string,
+            "session_time_stamp_string": props.session_time_stamp_string,
+            "type": props.buttonType,
+        }
+        registerActivity(props.session_time_stamp_string, activityLog)
+        .then((ans) => {
+            console.log(ans);
+        })
+        .catch((error) => { 
+            const errorMessage = "DB error. Please let me know what caused this error (what did you click. But you can keep working. Maybe also share the following message with me:\n" + error;
+            alert(errorMessage); 
+        });
+    };
+
 
     function mouse_click() {
         if (buttonRef.current) {
@@ -35,6 +61,8 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
                 button.style.backgroundColor = originalColor;
                 setClickTriggered(false); // Reset flag after animation
             }, ANIMATION_TIME);
+
+            storeActivity();
         }
     }
 
