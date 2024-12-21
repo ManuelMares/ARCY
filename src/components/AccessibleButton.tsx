@@ -65,6 +65,7 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
 
             setClickTriggered(true);
             cancel_click();
+            storeActivity();
 
             // click animation
             setTimeout(() => {
@@ -72,7 +73,6 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
                 setClickTriggered(false); // Reset flag after animation
             }, ANIMATION_TIME);
 
-            storeActivity();
         }
     }
 
@@ -90,13 +90,15 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
                 if(onClick)
                     onClick();
 
+                storeActivity();
+
                 // click animation
                 setTimeout(() => {
                     button.style.backgroundColor = originalColor;
                 }, ANIMATION_TIME);
+                
             }
         }, delay);
-        storeActivity();
     }
 
     const cancel_click = () => {
