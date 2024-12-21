@@ -243,6 +243,8 @@ export default function Keyobard(){
     // Autocompleter
     //--------------------------------------------------------------------------------------
     // List of words to autocomplete
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const wordList = words.getMostPopular(1000);
     
     // Initialize Fuse with options
@@ -262,6 +264,8 @@ export default function Keyobard(){
       
     
     // Example usage
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const response = getMatches("he");
 
     return(
@@ -301,7 +305,7 @@ export default function Keyobard(){
                         <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setText(""); setBuffer("")}}>Clear</AccessibleButton>
                         <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setDisplaySettings(true)}}>Settings</AccessibleButton>
                         <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{guessSentence()}}>Guesser</AccessibleButton>
-                        <Speak fontSize={fontSize} delay={clickSpeed} colorScheme="green" text={text} />
+                        <Speak session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} delay={clickSpeed} colorScheme="green" text={text} />
                     </Flex>                    
                 </GridItem>
 
@@ -378,6 +382,7 @@ export default function Keyobard(){
                 setFontSize={setFontSize}
                 setBuffer={setBuffer}
                 setText={setText}
+                session_time_stamp_string={SESSION_TIME_STAMP_STRING} 
             />
 
         </>

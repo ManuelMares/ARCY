@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import AccessibleButton from './AccessibleButton';
+import { ButtonTypeEnum } from './ENUMS/ButtonTypeEnum';
 
 interface Props {
   text: string;
   fontSize: number;
   delay: number;
   colorScheme: string;
+  session_time_stamp_string: string;
 }
 
 const femaleVoiceNames = [
@@ -63,7 +65,7 @@ export default function Speak(props: Props) {
 
   return (
     <div>
-      <AccessibleButton fontSize={props.fontSize} colorScheme={props.colorScheme} w="100%" delay={props.delay} onClick={() => { speak(props.text) }}>Read</AccessibleButton>
+      <AccessibleButton buttonType={ButtonTypeEnum.READ_TTS} session_time_stamp_string={props.session_time_stamp_string}  fontSize={props.fontSize} colorScheme={props.colorScheme} w="100%" delay={props.delay} onClick={() => { speak(props.text) }}>Read</AccessibleButton>
     </div>
   );
 };

@@ -20,6 +20,8 @@ interface IProps{
     setText: (value:string) => void
     setPostSentence: (value:string) => void
     setBuffer: (value:string) => void
+    
+    session_time_stamp_string: string;
 }
 export default function SecondaryMenus(props: IProps){
     
@@ -45,7 +47,7 @@ export default function SecondaryMenus(props: IProps){
                 props.displaySettings
                 ?
                     <Flex className="blurry-bg" position={"absolute"} top={"0vh"} left="0vw"  w="100vw" h="100vh" justifyContent={"center"} alignItems={"center"}>
-                        <Settings keyboardWidth={props.keyboardWidth} setKeyboardWidth={props.setKeyboardWidth} clickSpeed={props.clickSpeed} fontSize={props.fontSize} changeClickSpeed={changeClickSpeed} changeFontSize={changeFontSize} setDisplaySettings={props.setDisplaySettings} />
+                        <Settings session_time_stamp_string={props.session_time_stamp_string} keyboardWidth={props.keyboardWidth} setKeyboardWidth={props.setKeyboardWidth} clickSpeed={props.clickSpeed} fontSize={props.fontSize} changeClickSpeed={changeClickSpeed} changeFontSize={changeFontSize} setDisplaySettings={props.setDisplaySettings} />
                     </Flex>
                 :
                     null
@@ -54,7 +56,7 @@ export default function SecondaryMenus(props: IProps){
                 props.displaySentenceEditor
                 ?
                     <Flex className="blurry-bg" position={"absolute"} top={"0vh"} left="0vw"  w="100vw" h="30vh" justifyContent={"center"} alignItems={"center"}>
-                        <SentenceEditor setText={props.setText} setPostSentence={props.setPostSentence} setBuffer={props.setBuffer} clickSpeed={props.clickSpeed} fontSize={props.fontSize} buffer={props.buffer} preSentence={props.preSentence} postSentence={props.postSentence} setDisplaySentenceEditor={props.setDisplaySentenceEditor} />
+                        <SentenceEditor session_time_stamp_string={props.session_time_stamp_string} setText={props.setText} setPostSentence={props.setPostSentence} setBuffer={props.setBuffer} clickSpeed={props.clickSpeed} fontSize={props.fontSize} buffer={props.buffer} preSentence={props.preSentence} postSentence={props.postSentence} setDisplaySentenceEditor={props.setDisplaySentenceEditor} />
                     </Flex>
                 :
                     null
