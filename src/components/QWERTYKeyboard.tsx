@@ -130,7 +130,7 @@ export default function QWERTYKeyboard(props: IProps){
                         alignItems={"center"}
                         justifyContent={"space-around"}
                         >
-                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{setSymbolLevel(symbolLevel != ENUM_SYMBOL_LEVELS.CAPITAL ? ENUM_SYMBOL_LEVELS.CAPITAL : ENUM_SYMBOL_LEVELS.NORMAL)}} w="8rem" h="5rem">CAP</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme={symbolLevel != ENUM_SYMBOL_LEVELS.CAPITAL ? "blackAlpha"  : "orange"} delay={props.clickSpeed} onClick={()=>{setSymbolLevel(symbolLevel != ENUM_SYMBOL_LEVELS.CAPITAL ? ENUM_SYMBOL_LEVELS.CAPITAL : ENUM_SYMBOL_LEVELS.NORMAL)}} w="8rem" h="5rem">CAP</AccessibleButton>
                         
                         <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[10][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[10][symbolLevel]}</AccessibleButton>
                         <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[11][symbolLevel]);}} w="5rem" h="5rem">{KEY_SYMBOLS[11][symbolLevel]}</AccessibleButton>
@@ -150,7 +150,7 @@ export default function QWERTYKeyboard(props: IProps){
                         justifyContent={"space-around"}
                         >
                             
-                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{setSymbolLevel(symbolLevel != ENUM_SYMBOL_LEVELS.SHIFT ? ENUM_SYMBOL_LEVELS.SHIFT : ENUM_SYMBOL_LEVELS.NORMAL)}} w="8rem" h="5rem">Symbolic</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme={symbolLevel != ENUM_SYMBOL_LEVELS.SHIFT ? "blackAlpha"  : "orange"} delay={props.clickSpeed} onClick={()=>{setSymbolLevel(symbolLevel != ENUM_SYMBOL_LEVELS.SHIFT ? ENUM_SYMBOL_LEVELS.SHIFT : ENUM_SYMBOL_LEVELS.NORMAL)}} w="8rem" h="5rem">Symbolic</AccessibleButton>
                         
                         <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[19][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[19][symbolLevel]}</AccessibleButton>
                         <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[20][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[20][symbolLevel]}</AccessibleButton>
@@ -160,7 +160,7 @@ export default function QWERTYKeyboard(props: IProps){
                         <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[24][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[24][symbolLevel]}</AccessibleButton>
                         <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{addToBuffer(KEY_SYMBOLS[25][symbolLevel]); }} w="5rem" h="5rem">{KEY_SYMBOLS[25][symbolLevel]}</AccessibleButton>                        
                         
-                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme="blackAlpha" delay={props.clickSpeed} onClick={()=>{setSymbolLevel(symbolLevel != ENUM_SYMBOL_LEVELS.NUMBER ? ENUM_SYMBOL_LEVELS.NUMBER : ENUM_SYMBOL_LEVELS.NORMAL)}} w="8rem" h="5rem">number</AccessibleButton>
+                        <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} fontSize={props.fontSize} colorScheme={symbolLevel != ENUM_SYMBOL_LEVELS.NUMBER ? "blackAlpha"  : "orange"} delay={props.clickSpeed} onClick={()=>{setSymbolLevel(symbolLevel != ENUM_SYMBOL_LEVELS.NUMBER ? ENUM_SYMBOL_LEVELS.NUMBER : ENUM_SYMBOL_LEVELS.NORMAL)}} w="8rem" h="5rem">number</AccessibleButton>
                     </Flex>
                 </Flex>
             </GridItem>
