@@ -12,6 +12,7 @@ interface AccessibleButtonProps extends ButtonProps {
     keyId?: number;
     session_time_stamp_string: string;
     buttonType: ButtonTypeEnum;
+    text?: string;
 }
 
 export default function AccessibleButton(props: AccessibleButtonProps) {
@@ -26,10 +27,19 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
         if(!props.session_time_stamp_string)
             return;
 
-        const activityLog:IActivityLog = {
+
+        let activityLog:IActivityLog = {
             "button": props.children as string,
             "session_time_stamp_string": props.session_time_stamp_string,
             "type": props.buttonType,
+        }
+        if(props.text){
+            activityLog = {
+                "button": props.children as string,
+                "session_time_stamp_string": props.session_time_stamp_string,
+                "type": props.buttonType,
+                "text": props.text
+            }
         }
         registerActivity(props.session_time_stamp_string, activityLog)
         .then((ans) => {
@@ -86,6 +96,7 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
                 }, ANIMATION_TIME);
             }
         }, delay);
+        storeActivity();
     }
 
     const cancel_click = () => {
