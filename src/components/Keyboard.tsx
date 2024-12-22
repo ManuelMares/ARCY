@@ -23,9 +23,8 @@ type FuseResult<T> = {
 };
 
 
-// "House":            "I am going to talk about stuff I do in my house, such as -I watched tv- or -I ate dinner with my parents- or -I will go home-",
 const CONTEXT_PROMPTS = {
-    "House":            "House",
+    "House":            "I am going to talk about stuff I do in my house, such as -I watched tv- or -I ate dinner with my parents- or -I will go home-",
     "Story Telling":    `I am going to talk about things that happened before, such as  "I did my homework...", "I went to the concert...", "last month I visited my parent in Chihuahua..."`,
     "School":           `I am going to talk about school relate stuff, such as "I have an exam tomorrow...", "I had an exam yesterday...", "I have to complete an essay on..."`,
     "Profession":       `Profession`,
