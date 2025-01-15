@@ -31,7 +31,7 @@ const fuse = new Fuse(wordList.map((word:string) => ({ word })), options);
 // Function to get matches
 export function getMatches(input:string){
     const results: FuseResult<WordItem>[] = fuse.search(input);
-    console.log(results)
+    // console.log(results)
     return results.map((result:FuseResult<WordItem>)=>result.item.word);
 }
 
