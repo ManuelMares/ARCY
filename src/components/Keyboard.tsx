@@ -7,20 +7,11 @@ import SentenceGuesser from "./SentenceGuesser";
 import Speak from  './Speak'
 import QWERTYKeyboard from "./QWERTYKeyboard";
 import SecondaryMenus from "./secondaryMenus/SecondaryMenus";
-import Fuse from 'fuse.js';
-import {words} from 'popular-english-words';
 import { createNewSession } from "./firebase";
 import { ButtonTypeEnum } from "./ENUMS/ButtonTypeEnum";
+import { produce_prompt } from "./Propmts";
 
 
-type WordItem = {
-    word: string;
-};
-
-type FuseResult<T> = {
-    item: T;
-    // You can add other properties that FuseResult might have, like score, matches, etc.
-};
 
 
 const CONTEXT_PROMPTS = {
@@ -101,12 +92,11 @@ export default function Keyobard(){
 
 
     useEffect(() => {
+        /*
+            Updates the word suggestions
+        */
+
         setIsGuesserSentenceSuggesion(false);
-        // You are a helpful text autocompleter that helps by guessing what the next word in the paragraph will be. 
-
-        // You are a helpful text completion system for a person who cannot talk or move. She uses it for communication. She is a friendly person and likes to
-        // talk casually and keep it short.
-
 
         setPrompt(`
             You are a helpful text completion system for a person who cannot talk or move. She relies completely on you for communication. 
@@ -121,28 +111,10 @@ export default function Keyobard(){
             Sentences should be something she would use in daily life with friends, family and in school.
             sentences that have same word but in different tenses and participle form.`
         );
-        if(buffer === ""){
-            //empty buffer only adds to the text
-            setPromptContent(`
-                The context of my text is: ${context}. This means, all the words, and therefore, all your suggestions, must be related to ${context}
-                text: "${displaySentenceEditor ? preSentence: text}" 
-                What is the next word? 
-                ${hasWordGroup ? "All the options must be "+wordGroup+". Do not return any word if they are not "+wordGroup+". Seriously, only suggest"+wordGroup+" or nothing." : ""}
-                `);
-            setIsReplacingBuffer(false);
-        }
-        else{
-            //Since there is a buffer, it must be replaced by suggestion
-            setPromptContent(`
-                The context of my text is: ${context}. This means, all the words, and therefore, all your suggestions, must be related to ${context}
-                text: "${displaySentenceEditor ? preSentence: text}" 
-                What is the next word? 
-                Guess the next word I am thinking of. The next word starts with the characters "${buffer})"
-                ${hasWordGroup ? "All the options must be "+wordGroup+". Do not return any word if they are not "+wordGroup+". Seriously, only suggest"+wordGroup+" or nothing." : ""}
-                Also, all suggestions must be in English.
-            `);
-            setIsReplacingBuffer(true);
-        }
+
+        // if in editor mode, consider only preSentence (0, edittingWord - 1)
+        const pre_text = displaySentenceEditor ? preSentence: text
+        setPromptContent(produce_prompt({context, pre_text, buffer}))
     }, [buffer, text, wordGroup, hasWordGroup, context, hasContext])
 
     function defineWordGroup(group:string){
@@ -239,34 +211,9 @@ export default function Keyobard(){
     
 
 
-    //--------------------------------------------------------------------------------------
-    // Autocompleter
-    //--------------------------------------------------------------------------------------
-    // List of words to autocomplete
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const wordList = words.getMostPopular(1000);
-    
-    // Initialize Fuse with options
-    const options = {
-      includeScore: true,
-      threshold: 0.3, // Lower this number for stricter matching
-      keys: ['word']
-    };
-    
-    const fuse = new Fuse(wordList.map((word:string) => ({ word })), options);
-    
-    // Function to get matches
-    const getMatches = (input: string): string[] => {
-        const results: FuseResult<WordItem>[] = fuse.search(input);
-        return results.map((result: FuseResult<WordItem>) => result.item.word);
-    };
+
       
     
-    // Example usage
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const response = getMatches("he");
 
     return(
         <>
@@ -286,7 +233,7 @@ export default function Keyobard(){
 
                 {/* TEXT */}
                 <GridItem area="Text" bgColor="white" p="1rem" m="0" w="100%" h="100%">
-                    <Flex>
+                    <Flex wrap={"wrap"}>
                         {
                             text.split(" ").map((word:string, index:number) => {
                                 return(
