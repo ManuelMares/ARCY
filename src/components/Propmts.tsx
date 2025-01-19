@@ -56,6 +56,7 @@ interface ICluesCompletion{
     context: string,
     preText: string,
     buffer: string,
+    wordGroup: string,
 }
 interface ICluesVariations{
     context: string,
@@ -83,15 +84,20 @@ export function prompt_wordCompletion(props:ICluesCompletion){
                     Example 2: if the text is 'A journalist'
                     Then good options are words such as 'is', 'was', 'wants', 'needs', etc. The priority is describing what the noun is, then other things
                     Notice that they make sense because they complete a correct sentence ('yesterday I was' makes sense).
-                    Rule: Match the vocabulary. If the vocabulary is relaxed, the suggestions must be relaxed. If formal, add more formal words.
-                    Rule: Do not wrap the words in quote marks or similar!!!. Instead of givin back 'rooted', return the word rooted without extra characters
-                    Rule: When possible, only suggest words like nouns and adjectives after having suggest at least 5 short words that help connect ideas, such as
+                    >Rule: Match the vocabulary. If the vocabulary is relaxed, the suggestions must be relaxed. If formal, add more formal words.
+                    >Rule: Do not wrap the words in quote marks or similar!!!. Instead of givin back 'rooted', return the word rooted without extra characters
+                    >Rule: When possible, only suggest words like nouns and adjectives after having suggest at least 5 short words that help connect ideas, such as
                         a, an, am, in, by, my, at, is, was, but, also, it, I, the, their.
-                    Rule: If the word to suggest is the beginning of a new sentence (after a period or empty text), always suggest I as the first option
-                    Rule: If the text is empty, or ends in a period, consider using
-                        1) articles, such as the
-                        2) Always add the pronoun 'I' as an option
-                        3) Nouns that were used previously in the text
+                    >Rule: If the word to suggest is the beginning of a new sentence (after a period or empty text), always suggest I as the first option
+                    >Rule 
+                        IF: the text is empty, OR is the beginning of a new sentence (ends in a period)
+                        DO: Start the word in capital
+                    >Rule 
+                        IF: the text is empty, OR is the beginning of a new sentence (ends in a period)
+                        DO: suggest words such as
+                            5 pronouns, i.e. I, he, they, she, it, we, my
+                            5 articles and nouns, i.e. the, hello, today, yesterday, by
+                            5 question words, i.e. how, what, why, when
                     Suggestion: If you see we are talking about the past, change the options to that: was, did, etc.
                     Suggestion. Match the style. If the person does not use a lof of adjectives, do not suggest them. same with other groups of words.
                     \n `;
@@ -107,18 +113,23 @@ export function prompt_wordCompletion(props:ICluesCompletion){
         }
         prompt += `I gave you words that can potentially complete the text. Rank them according to which word completes the paragraph best. Your answer must be exactly 15 words, each selected from the options provided.\n\n`;
         prompt += `
-            Rule 1: If you are confident that there is a word that completes the text better, replace one of the options for your proposal. Don't be afraid to be perfect, since you are limited to replace only five options at most.
+            >Rule 1: If you are confident that there is a word that completes the text better, replace one of the options for your proposal. Don't be afraid to be perfect, since you are limited to replace only five options at most.
             Example: if you get the text 'I love studying and I want to ', and the word to complete is 'de', but the options are weird options not related to studying, you can suggest better options, such as  'delve'.
             Example: 'intr' might suggest the words 'intricate'. If the word fits the text properly, add it.
-            Rule 2: If there are repeated options, replace the repeated option for new options. For instance, if you get the options 'studied' several times, add variations of that word, such as 'studying', 'study',
+            >Rule 2: If there are repeated options, replace the repeated option for new options. For instance, if you get the options 'studied' several times, add variations of that word, such as 'studying', 'study',
             or even synonyms if there are no more variations (because preserve the tense is preferable), so words like 'understood', 'reviewed', 'learned' are also great options.
             Think of changing the tense, making them into verbs, adjectives, add thinks like 'ly', etc. as long as the product are real common words
-            Rule 3: Do not wrap the words in any character such as quote marks ('). Example, do not answer 'is', answer is.
-            Rule 4: Match the vocabulary. If the vocabulary of the text is formal, give priority to formal words.
-            Rule 5: If there are less than 15 options, You provide more options that are not repeated, and tha follow the same conditions:
+            >Rule 3: Do not wrap the words in any character such as quote marks ('). Example, do not answer 'is', answer is.
+            >Rule 4: Match the vocabulary. If the vocabulary of the text is formal, give priority to formal words.
+            >Rule 5: If there are less than 15 options, You provide more options that are not repeated, and tha follow the same conditions:
                     They start with the string ${props.buffer}, and that continues the paragraph ${props.preText}
             `
     }
+
+    if(props.wordGroup != "")
+        prompt += `>MOST IMPORTANT RULE
+        all the options must be ${props.wordGroup}. If an option is not ${props.wordGroup}, then omit it, and replace it for new options that are ${props.wordGroup}.
+        Preferably, the ${props.wordGroup} suggested must be words that make sense when added to the current text.`
     return prompt;
 }
 
@@ -143,8 +154,26 @@ export function prompt_wordVariations(props:ICluesVariations) {
                 Then the suggestions must use the root word 'profession'. Good outputs are words such as  'profession', 'Professionalize', etc. Include the root word ('profession' in this case) if it is not the given word itself 
                 Example 3: if the word is 'is'.
                 Then the suggestion can be declinations, such as 'was', 'will be', or similar words, such as 'isn't'. 
-                Rule: Do not wrap the words in '. Instead of givin back 'rooted', return the word rooted without extra characters
-                Rule: Start the word with capital only if it is gramatically correct (i.e., empty previous text, noun, after a period)
+                >Rule: Do not wrap the words in '. Instead of givin back 'rooted', return the word rooted without extra characters
+                >Rule: Start the word with capital only if it is gramatically correct (i.e., empty previous text, noun, after a period)
+                >Rule: If the word is 'be' or 'is'
+                    If the word is the verb 'be', 'is' or any of its variations (such as be, am, was, is, etc.), 
+                    look at the noun that is using that verb, and suggest matches for that verb.
+                    Example. 
+                        text -> I
+                        word to variate -> be
+                    answer
+                        Suggest words such as am, was, will, etc.
+                    explanation. It is obvious that if the user wrote noun + to be, they want to write something like I am, I was, or I will.
+                >Rule: if the word is a preposition
+                    If the word is a preposition such as in, on, for, with, at, by, the suggested variation must be prepositions that fit better the text, starting by the most common ones to, of, in, for, with, at, by
+                    Example
+                        text -> the book is
+                        word to variate -> at
+                    Answer
+                        Suggest prepositions such as on
+                    Explanation
+                        'The book is on' is a common preposition, since books can be on tables, beds, etc.
                 Do the same for the string '${props.lastWord}' that will go concatenated to '${props.preText}. Don't forget to give 10 options and no extra information\n
                 
                 `;

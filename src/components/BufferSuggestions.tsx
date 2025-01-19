@@ -71,11 +71,12 @@ export default function BufferSuggestions(props:Iprops){
         `;
         console.log("pretext", preTextRef.current)
         const buffer = props.buffer;
+        const wordGroup = props.wordGroup;
         const context = props.context;
         const preText = preTextRef.current
         console.log("buffer", buffer)
         props.setIsReplacingBuffer( props.buffer != "")  // To change keys color
-        const promptContent = prompt_wordCompletion({context, preText, buffer})
+        const promptContent = prompt_wordCompletion({context, preText, buffer, wordGroup})
         getSuggestions(prompt, promptContent);
 
     }
