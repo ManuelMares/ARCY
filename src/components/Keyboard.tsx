@@ -1,6 +1,6 @@
 import { Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import '../index.css';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AccessibleButton from "./AccessibleButton";
 import BufferSuggestions from "./BufferSuggestions";
 import SentenceGuesser from "./SentenceGuesser";
@@ -9,7 +9,7 @@ import QWERTYKeyboard from "./QWERTYKeyboard";
 import SecondaryMenus from "./secondaryMenus/SecondaryMenus";
 import { createNewSession } from "./firebase";
 import { ButtonTypeEnum } from "./ENUMS/ButtonTypeEnum";
-import { produce_prompt } from "./Propmts";
+import WordVariations from "./WordVariations";
 
 
 
@@ -31,6 +31,8 @@ export default function Keyobard(){
     // Variables
     const [text, setText] = useState<string>("");
     const [buffer, setBuffer] = useState<string>("");
+    const bufferRef = useRef("");
+
     // Texts used for AI prompts
     const [prompt, setPrompt] = useState<string>("");
     const [promptContent, setPromptContent] = useState<string>("");
@@ -89,33 +91,10 @@ export default function Keyobard(){
     const NUMBER_GUESSED_SENTENCES = 8;
     const [isGuesserSentenceSuggestion, setIsGuesserSentenceSuggesion] = useState<boolean>(false)
     
-
-
-    useEffect(() => {
-        /*
-            Updates the word suggestions
-        */
-
-        setIsGuesserSentenceSuggesion(false);
-
-        setPrompt(`
-            You are a helpful text completion system for a person who cannot talk or move. She relies completely on you for communication. 
-            She is a friendly person and likes to talk casually and keep it short. 
-            She is a student in spanish department. She likes to talk to her friends and family.
-
-            You are a helpful text autocompleter that helps by guessing what the next word in the paragraph will be. 
-            Your job is to help her by guessing what the next word in the paragraph will be. 
-            You work this way: I will give you a text, and you guess the immediate most likely word to be used. 
-            You provide in total 15 guess words, never more. your answer do not include extra words, just 15 words which are guesses.
-            If the text I give you is empty, try to guess the word that can start the most sentences. Something generic, like 'I', but give me still 15 options
-            Sentences should be something she would use in daily life with friends, family and in school.
-            sentences that have same word but in different tenses and participle form.`
-        );
-
-        // if in editor mode, consider only preSentence (0, edittingWord - 1)
-        const pre_text = displaySentenceEditor ? preSentence: text
-        setPromptContent(produce_prompt({context, pre_text, buffer}))
-    }, [buffer, text, wordGroup, hasWordGroup, context, hasContext])
+    useEffect(()=>{
+        bufferRef.current = buffer
+        console.log(bufferRef.current)
+    },[buffer]);
 
     function defineWordGroup(group:string){
         if(wordGroup == group){
@@ -207,12 +186,18 @@ export default function Keyobard(){
         setBuffer(word);
 
         setDisplaySentenceEditor(true);
+        console.log("editing")
+    }
+    
+    function replaceLastWord(word:string){
+        const words = text.trim().split(' ')
+        let newText = words.slice(0, words.length - 1).join(' ');
+        newText = newText + " " + word + " "
+        setText(newText);
     }
     
 
 
-
-      
     
 
     return(
@@ -233,25 +218,35 @@ export default function Keyobard(){
 
                 {/* TEXT */}
                 <GridItem area="Text" bgColor="white" p="1rem" m="0" w="100%" h="100%">
-                    <Flex wrap={"wrap"}>
-                        {
-                            text.split(" ").map((word:string, index:number) => {
-                                return(
-                                    <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} keyId={index} key={"key"+index} minW={"0.2rem"} m="0" p="0.2rem" bg="white" delay={clickSpeed} onCustomClick={editWord}>{word}</AccessibleButton>
-                                )
-                            })
-                        }
-                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} minW={"0.5rem"} p="0" m="0" bgColor="teal" delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>{buffer}</AccessibleButton>
+                    <Flex flexDir={"column"} justifyContent={"space-between"} h="100%">
+                        <Flex wrap={"wrap"}>
+                            {
+                                text.split(" ").map((word:string, index:number) => {
+                                    return(
+                                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} keyId={index} key={"key"+index} minW={"0.2rem"} m="0" p="0.2rem" bg="white" delay={clickSpeed} onCustomClick={editWord}>{word}</AccessibleButton>
+                                    )
+                                })
+                            }
+                            <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} minW={"0.5rem"} p="0" m="0" bgColor="teal" delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>{buffer}</AccessibleButton>
+                        </Flex>
+                        <WordVariations 
+                            context={context} 
+                            text={text} 
+                            session_time_stamp_string={SESSION_TIME_STAMP_STRING} 
+                            fontSize={fontSize} 
+                            delay={clickSpeed}
+                            replaceLastWord={replaceLastWord}
+                            />
                     </Flex>
                 </GridItem>
                 
                 {/* TEXT BUTTONS */}
                 <GridItem area="Buttons" bgColor="white" m="0" p="1rem" w="100%" h="100%">
                     <Flex flexDir={"column"} w="100%" h="100%" m="0" p="0" justifyContent={"space-around"}>
-                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{removeLastWord()}}>Delete word</AccessibleButton>
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="red" w="100%" delay={clickSpeed} onClick={()=>{removeLastWord()}}>Delete word</AccessibleButton>
                         <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setText(""); setBuffer("")}}>Clear</AccessibleButton>
                         <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setDisplaySettings(true)}}>Settings</AccessibleButton>
-                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{guessSentence()}}>Guesser</AccessibleButton>
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="blue" w="100%" delay={clickSpeed} onClick={()=>{guessSentence()}}>Guesser</AccessibleButton>
                         <Speak session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} delay={clickSpeed} colorScheme="green" text={text} />
                     </Flex>                    
                 </GridItem>
@@ -292,13 +287,27 @@ export default function Keyobard(){
                 </GridItem>
 
                 {/* Suggestions */}
-                <GridItem area="Suggestions" w="100%">
-                    {
-                        isGuesserSentenceSuggestion ?
-                            <SentenceGuesser session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} prompt={prompt} promptContent={promptContent} replaceText={setText} numberOfSentences={NUMBER_GUESSED_SENTENCES}/>
-                        :
-                            <BufferSuggestions session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} prompt={prompt} promptContent={promptContent} replaceBuffer={replaceBuffer} isReplacingBuffer={isReplacingBuffer}/>
-                    }
+                <GridItem area="Suggestions" w="100%" h="100%">
+                        {
+                            isGuesserSentenceSuggestion ?
+                                <SentenceGuesser session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} prompt={prompt} promptContent={promptContent} replaceText={setText} numberOfSentences={NUMBER_GUESSED_SENTENCES}/>
+                                :
+                                <BufferSuggestions 
+                                    text={text}
+                                    buffer={buffer}
+                                    context={context}
+                                    fontSize={fontSize} 
+                                    wordGroup={wordGroup} 
+                                    hasContext={hasContext}
+                                    hasWordGroup={hasWordGroup}  
+                                    isReplacingBuffer={isReplacingBuffer} 
+                                    displaySentenceEditor= {displaySentenceEditor}
+                                    session_time_stamp_string={SESSION_TIME_STAMP_STRING}  
+                                    replaceBuffer={replaceBuffer} 
+                                    setIsReplacingBuffer={setIsReplacingBuffer}
+                                    setIsGuesserSentenceSuggesion={setIsGuesserSentenceSuggesion}
+                                />
+                        }
                 </GridItem>
 
                 {/* KEYBOARD */}
