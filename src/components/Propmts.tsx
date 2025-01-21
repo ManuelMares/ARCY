@@ -78,26 +78,41 @@ export function prompt_wordCompletion(props:ICluesCompletion){
     // Empty Buffer
     const preText = props.preText
     if (props.buffer === "" || word_options.length == 0) {
-        prompt += `Your job is to give me 15 words that better continue the following text '${preText}'.
-                    Example: if the text is 'Yesterday I'
-                    Then your response must be things that complete that sentence, such as 'was', 'ran', 'saw'
-                    Example 2: if the text is 'A journalist'
-                    Then good options are words such as 'is', 'was', 'wants', 'needs', etc. The priority is describing what the noun is, then other things
-                    Notice that they make sense because they complete a correct sentence ('yesterday I was' makes sense).
-                    >Rule: Match the vocabulary. If the vocabulary is relaxed, the suggestions must be relaxed. If formal, add more formal words.
-                    >Rule: Do not wrap the words in quote marks or similar!!!. Instead of givin back 'rooted', return the word rooted without extra characters
-                    >Rule: When possible, only suggest words like nouns and adjectives after having suggest at least 5 short words that help connect ideas, such as
-                        a, an, am, in, by, my, at, is, was, but, also, it, I, the, their.
-                    >Rule: If the word to suggest is the beginning of a new sentence (after a period or empty text), always suggest I as the first option
+        prompt += ` >Task: Your job is to give me 15 words that better continue the following text '${preText}'.
+                        1) Return 15 words. No more or less. Exactly 15 words
+                        2) The format is the 15 words one after the other separated by a simple space, with no decorations such as quotation marks
+                            Example:
+                                text -> Hello, how 
+                                answer -> are do can is did to could will long large far couldn't come
+                    >Rule
+                        IF: Text ends with a space (indicating a new word is being typed).
+                        DO: Suggest contextually appropriate words based on previous word(s). For example:
+                            After pronouns: suggest verbs (e.g., I -> am, He -> runs, They -> are)
+                            After articles: suggest nouns (e.g., The -> dog, A -> car, An -> apple)
+                    >Rule 
+                        IF: the text is empty, OR is the beginning of a new sentence (ends in a period)
+                        DO:
+                            5 pronouns, i.e. I, he, they, she, it, we, my. Specially consider pronouns that reflect the noun used previously
+                            5 articles and nouns, i.e. the, hello, today, yesterday, by
+                            5 question words, i.e. how, what, why, when
+                    >Rule
+                        DO: ensure sentence consistency. For example
+                            subject-verb agreement: (e.g. he -> runs)
+                            noun-pronoun agreement: (e.g. the girl lost -> her)
+                            tense consistency: (e.g. the girl lost her bag. She -> was)
+                    >Rule
+                        IF: The sentence begins with certain phrases.
+                        DO: Predict the common continuation (e.g., "Would you" -> like, mind, be)
+                    >Rule 
+                        DO: Match the vocabulary style. 
+                        If the vocabulary is relaxed, the suggestions must be relaxed. If formal, add more formal words.
                     >Rule 
                         IF: the text is empty, OR is the beginning of a new sentence (ends in a period)
                         DO: Start the word in capital
-                    >Rule 
-                        IF: the text is empty, OR is the beginning of a new sentence (ends in a period)
-                        DO: suggest words such as
-                            5 pronouns, i.e. I, he, they, she, it, we, my
-                            5 articles and nouns, i.e. the, hello, today, yesterday, by
-                            5 question words, i.e. how, what, why, when
+                    >Rule:
+                    >Rule: 
+                        DO: When possible, only suggest words like nouns and adjectives after having suggest at least 5 short words that help connect ideas, such as
+                        a, an, am, in, by, my, at, is, was, but, also, it, I, the, their.
                     Suggestion: If you see we are talking about the past, change the options to that: was, did, etc.
                     Suggestion. Match the style. If the person does not use a lof of adjectives, do not suggest them. same with other groups of words.
                     \n `;
@@ -105,25 +120,38 @@ export function prompt_wordCompletion(props:ICluesCompletion){
     // With Buffer
     else 
     {
-        prompt += `Now I will give you word options to rank according to which ones complete the paragraph better. Here is the paragraph: '${props.preText}'.\n\n`;
-        for (let index = 0; index < word_options.length; index++) {
-            const option = word_options[index];
-            // prompt += `Option ${index + 1}: ${option}\nWith this option, the text sounds like: '${props.preText} ${option}'.\n\n`;
-            prompt += `Option ${index + 1}: ${option}\n\n`;
-        }
-        prompt += `I gave you words that can potentially complete the text. Rank them according to which word completes the paragraph best. Your answer must be exactly 15 words, each selected from the options provided.\n\n`;
+        
         prompt += `
-            >Rule 1: If you are confident that there is a word that completes the text better, replace one of the options for your proposal. Don't be afraid to be perfect, since you are limited to replace only five options at most.
-            Example: if you get the text 'I love studying and I want to ', and the word to complete is 'de', but the options are weird options not related to studying, you can suggest better options, such as  'delve'.
-            Example: 'intr' might suggest the words 'intricate'. If the word fits the text properly, add it.
-            >Rule 2: If there are repeated options, replace the repeated option for new options. For instance, if you get the options 'studied' several times, add variations of that word, such as 'studying', 'study',
-            or even synonyms if there are no more variations (because preserve the tense is preferable), so words like 'understood', 'reviewed', 'learned' are also great options.
-            Think of changing the tense, making them into verbs, adjectives, add thinks like 'ly', etc. as long as the product are real common words
-            >Rule 3: Do not wrap the words in any character such as quote marks ('). Example, do not answer 'is', answer is.
-            >Rule 4: Match the vocabulary. If the vocabulary of the text is formal, give priority to formal words.
-            >Rule 5: If there are less than 15 options, You provide more options that are not repeated, and tha follow the same conditions:
-                    They start with the string ${props.buffer}, and that continues the paragraph ${props.preText}
-            `
+            >Task
+                Your job is to, given a set of words, select those words that better continue the following text '${props.preText}'
+                1) Return 15 words. No more or less. Exactly 15 words
+                2) The format is the 15 words one after the other separated by a simple space, with no decorations such as quotation marks
+                    Example:
+                        text -> Hello, how 
+                        answer -> are do can is did to could will long large far couldn't come
+                >Most important Rule!!
+                    All the words must start with ${props.buffer}. If an optional word does not start with ${props.buffer}, discard it. Even if it was your added suggestion.
+                >Rule
+                    IF: You are given less than 15 words
+                    DO: Add suggestion words that are not repeated until there are 15 words in total
+                >Rule
+                    Do: Sort the words by likelihood of complete the text ${props.preText}. The first one in list must be the most likely word.
+                >Rule
+                    If the word that completes ${props.buffer} the most likely is not among the suggestions, replace the less likely options for the right word.
+                    Be active doing this
+                    Example
+                    text -> Science is an 
+                    starts with -> intr
+                    list of words -> Introduction introspective intrusive intransigeantly intracerebrally intramolecular intracutaneaos intractability intracellular  introspect intrapersonal intradermally intrapreneurs intromissions intracerebral
+                    answer -> intricate
+                    The list of words is not likely to complete the text. In the other hand, intricate is a word that suits and completes the text really well.
+                    `
+            prompt += `Now I will give you word options to rank according to which ones complete the paragraph better. Here is the paragraph: '${props.preText}'.\n\n`;
+            for (let index = 0; index < word_options.length; index++) {
+                const option = word_options[index];
+                // prompt += `Option ${index + 1}: ${option}\nWith this option, the text sounds like: '${props.preText} ${option}'.\n\n`;
+                prompt += `Option ${index + 1}: ${option}\n\n`;
+            }
     }
 
     if(props.wordGroup != "")
@@ -146,15 +174,22 @@ export function prompt_wordVariations(props:ICluesVariations) {
         prompt += `-> context of the guesses\nThe context is ${props.context}. This means that your answer must be related to ${props.context}.\n`;
     
     prompt += `The user wrote the word '${props.lastWord}'. 
-                Your job is to provide variations of the same word that use '${props.lastWord}' as the root
-                Furthermore, the words you chose must make sense when concatenated to '${props.preText}'.
-                Example: if the given word is 'sleep'.
-                Then, your answer must be the same root verb. Some options are 'sleeping', 'slept', 'sleeps', 'sleepy', 'sleeper', etc.
-                Example 2: if the given word is 'professional'.
-                Then the suggestions must use the root word 'profession'. Good outputs are words such as  'profession', 'Professionalize', etc. Include the root word ('profession' in this case) if it is not the given word itself 
-                Example 3: if the word is 'is'.
-                Then the suggestion can be declinations, such as 'was', 'will be', or similar words, such as 'isn't'. 
-                >Rule: Do not wrap the words in '. Instead of givin back 'rooted', return the word rooted without extra characters
+                >task
+                    Your job is to provide exactly 10 variations of the same word that use '${props.lastWord}' as the root
+                    Furthermore, the words you chose must make sense when concatenated to '${props.preText}'.
+                    Example: if the given word is 'sleep'.
+                    Then, your answer must be the same root verb. Some options are 'sleeping', 'slept', 'sleeps', 'sleepy', 'sleeper', etc.
+                    Example 2: if the given word is 'professional'.
+                    Then the suggestions must use the root word 'profession'. Good outputs are words such as  'profession', 'Professionalize', etc. Include the root word ('profession' in this case) if it is not the given word itself 
+                    Example 3: if the word is 'is'.
+                    Then the suggestion can be declinations, such as 'was', 'will be', or similar words, such as 'isn't'. 
+                >Rule 
+                    Do: Provide only 10 words. No more, no less. Exactly 10 everytime
+                >Rule: 
+                    Do not wrap the words in quotation marks or any other symbol
+                    The output has to be 10 words in a single line separated by simple space, as follows:
+                    example
+                        happy happier happily happiest unhappy excited jolly joyful content merry
                 >Rule: Start the word with capital only if it is gramatically correct (i.e., empty previous text, noun, after a period)
                 >Rule: If the word is 'be' or 'is'
                     If the word is the verb 'be', 'is' or any of its variations (such as be, am, was, is, etc.), 
