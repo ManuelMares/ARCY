@@ -12,8 +12,8 @@ export async function SuggestionsAPI(prompt:string, promptContent:string){
             };
 
             const requestBody = {
-                model: `gpt-4`,
-                // model: `gpt-4o-mini`,
+                // model: `gpt-4`,
+                model: `gpt-4o-mini`,
                 messages: [
                     {
                         role: 'system', 
