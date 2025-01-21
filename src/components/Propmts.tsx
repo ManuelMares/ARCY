@@ -200,6 +200,7 @@ export function prompt_wordVariations(props:ICluesVariations) {
                     answer
                         Suggest words such as am, was, will, etc.
                     explanation. It is obvious that if the user wrote noun + to be, they want to write something like I am, I was, or I will.
+                    In these cases match the noun 
                 >Rule: if the word is a preposition
                     If the word is a preposition such as in, on, for, with, at, by, the suggested variation must be prepositions that fit better the text, starting by the most common ones to, of, in, for, with, at, by
                     Example
@@ -209,6 +210,11 @@ export function prompt_wordVariations(props:ICluesVariations) {
                         Suggest prepositions such as on
                     Explanation
                         'The book is on' is a common preposition, since books can be on tables, beds, etc.
+                >Rule: When you get verbs such as 'like', provide negative options
+                    Example
+                        word to variate -> like
+                    Answer
+                        Suggest words such as dislike, unlike
                 Do the same for the string '${props.lastWord}' that will go concatenated to '${props.preText}. Don't forget to give 10 options and no extra information\n
                 
                 `;

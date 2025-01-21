@@ -175,7 +175,7 @@ export default function Keyobard(){
     function editWord(button:HTMLButtonElement, wordIndex:number){
         console.log(button);
         const words = text.split(' '); // Split the text into words
-        if(wordIndex == 0 || wordIndex == words.length -2)
+        if(wordIndex == 0 || wordIndex == words.length -1)
             return;
         const firstPart = words.slice(0, wordIndex).join(' '); // Get the first part
         const word = words[wordIndex].trim(); // Get the first part
