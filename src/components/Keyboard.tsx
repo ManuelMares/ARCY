@@ -25,6 +25,7 @@ const CONTEXT_PROMPTS = {
                         In general, the suggestions you give me must be useful to have casual conversation with my friends. 
                         I usually talk about school, house, what I did last few weeks, or what I will do in few weeks or on vacations. Or simply of what I want to do.`,
     "Store":            `Store`,
+    "Family":            `Family`,
     "Restaurant":       `I will order food at a restaurant, with sentences similar to "I would like to order...",  "I want an...", "May I have one..."`,
 }
 export default function Keyobard(){
@@ -243,10 +244,10 @@ export default function Keyobard(){
                 {/* TEXT BUTTONS */}
                 <GridItem area="Buttons" bgColor="white" m="0" p="1rem" w="100%" h="100%">
                     <Flex flexDir={"column"} w="100%" h="100%" m="0" p="0" justifyContent={"space-around"}>
-                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="red" w="100%" delay={clickSpeed} onClick={()=>{removeLastWord()}}>Delete word</AccessibleButton>
-                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setText(""); setBuffer("")}}>Clear</AccessibleButton>
-                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setDisplaySettings(true)}}>Settings</AccessibleButton>
-                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="blue" w="100%" delay={clickSpeed} onClick={()=>{guessSentence()}}>Guesser</AccessibleButton>
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION}  session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="red" w="100%" delay={clickSpeed} onClick={()=>{removeLastWord()}}>Delete word</AccessibleButton>
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION}  session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setText(""); setBuffer("")}}>Clear</AccessibleButton>
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION}  session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setDisplaySettings(true)}}>Settings</AccessibleButton>
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION}  session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="blue" w="100%" delay={clickSpeed} onClick={()=>{guessSentence()}}>Guesser</AccessibleButton>
                         <Speak session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} delay={clickSpeed} colorScheme="green" text={text} />
                     </Flex>                    
                 </GridItem>
@@ -281,6 +282,7 @@ export default function Keyobard(){
                             <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === CONTEXT_PROMPTS["Social"])          ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["Social"])          }}>    Social</AccessibleButton>
                             <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === CONTEXT_PROMPTS["Store"])           ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["Store"])           }}>    Store</AccessibleButton>
                             <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === CONTEXT_PROMPTS["Restaurant"])      ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["Restaurant"])      }}>    Restaurant</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === CONTEXT_PROMPTS["Family"])          ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["Family"])      }}>    Family</AccessibleButton>
 
                         </Flex>
                     </Flex>

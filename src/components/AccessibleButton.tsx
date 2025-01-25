@@ -41,7 +41,7 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
                 "text": props.text
             }
         }
-        return;
+        
         registerActivity(props.session_time_stamp_string, activityLog)
         .then((ans) => {
             console.log(ans);

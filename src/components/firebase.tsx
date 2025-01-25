@@ -62,14 +62,32 @@ function create_click_timestamp(date: Date){
     return `${year}-${month}-${day}, ${formattedTime}`;
 };
 
+async function getIpAddress() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch (error) {
+        console.error('Error fetching IP address:', error);
+    }
+}
+
+// Example usage
+getIpAddress().then(ip => console.log('IP Address:', ip));
+
+
 export function createNewSession(time_stamp_string:string) {
     // adds a session blob
     console.log(time_stamp_string);
     return new Promise((resolve, reject) => {
-        const newSessionDoc = doc(db, time_stamp_string, time_stamp_string);
-        setDoc(newSessionDoc, { creationTime: time_stamp_string }, { merge: true })
-            .then(() => resolve(true))
-            .catch((error) => reject(error));
+        getIpAddress().then(
+            (ip:string) => {
+            const newSessionDoc = doc(db, time_stamp_string, time_stamp_string);
+            setDoc(newSessionDoc, { creationTime: time_stamp_string, ip: ip }, { merge: true })
+                .then(() => resolve(true))
+                .catch((error) => reject(error));
+        
+        });
     });
 }
 

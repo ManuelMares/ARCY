@@ -190,7 +190,7 @@ export function prompt_wordVariations(props:ICluesVariations) {
                     The output has to be 10 words in a single line separated by simple space, as follows:
                     example
                         happy happier happily happiest unhappy excited jolly joyful content merry
-                >Rule: Start the word with capital only if it is gramatically correct (i.e., empty previous text, noun, after a period)
+                >Rule: Start the word with capital only if it is grammatically correct (i.e., empty previous text, noun, after a period)
                 >Rule: If the word is 'be' or 'is'
                     If the word is the verb 'be', 'is' or any of its variations (such as be, am, was, is, etc.), 
                     look at the noun that is using that verb, and suggest matches for that verb.
