@@ -115,6 +115,7 @@ export function prompt_wordCompletion(props:ICluesCompletion){
                         a, an, am, in, by, my, at, is, was, but, also, it, I, the, their.
                     Suggestion: If you see we are talking about the past, change the options to that: was, did, etc.
                     Suggestion. Match the style. If the person does not use a lof of adjectives, do not suggest them. same with other groups of words.
+                    
                     \n `;
     } 
     // With Buffer
@@ -136,6 +137,11 @@ export function prompt_wordCompletion(props:ICluesCompletion){
                     DO: Add suggestion words that are not repeated until there are 15 words in total
                 >Rule
                     Do: Sort the words by likelihood of complete the text ${props.preText}. The first one in list must be the most likely word.
+
+                >Rule: Ensure grammatical correctness
+                    DO: Identify the part of speech that is most likely to follow the last word in '${props.preText}'. Prioritize words that fit grammatically and contextually.
+                >Rule: Remove words that do not logically follow the sentence
+                    DO: Do not include words that disrupt meaning or create ungrammatical phrases.
                 >Rule
                     If the word that completes ${props.buffer} the most likely is not among the suggestions, replace the less likely options for the right word.
                     Be active doing this
@@ -183,6 +189,34 @@ export function prompt_wordVariations(props:ICluesVariations) {
                     Then the suggestions must use the root word 'profession'. Good outputs are words such as  'profession', 'Professionalize', etc. Include the root word ('profession' in this case) if it is not the given word itself 
                     Example 3: if the word is 'is'.
                     Then the suggestion can be declinations, such as 'was', 'will be', or similar words, such as 'isn't'. 
+
+                >Rule:
+                    DO: Only suggest real, commonly used words that are found in reputable dictionaries like Oxford, Merriam-Webster, or Cambridge.
+                    If a word is rarely used, archaic, or not recognized in major dictionaries, discard it.
+                    Avoid invented, incorrectly formed, or meaningless words (e.g., 'journalisticity', 'journaingly').
+                    Prioritize words that are frequently used in writing and speech.
+
+                >Rule:
+                    DO:
+                    Use only valid grammatical variations of the given word.
+                    Stick to recognized prefixes, suffixes, and tenses.
+                    Example: Given 'journal', valid outputs: 'journals', 'journaled', 'journaling', 'journalistic'. INVALID outputs: 'journalisticity', 'journaingly'.
+
+                >Rule:
+                    IF: No valid variations exist beyond common forms, repeat safe words instead of generating wrong words.
+                    
+                >Rule:
+                    DO: Cross-check variations against common English words.
+                    Use standard inflections (e.g., 'journal' → 'journals', 'journaling', 'journaled').
+                    If the suggested word sounds unnatural or obscure, replace it with a more standard alternative.
+                    
+                >Rule:
+                    IF: A word is a technical term, jargon, or rare usage, prefer a simpler alternative.
+                    Example: Instead of 'journalization', use 'recording' or 'documenting' if it fits better.
+                    
+                >Rule:
+                    DO NOT: Suggest words that are rarely found in written English or do not appear in reputable dictionaries.
+                    
                 >Rule 
                     Do: Provide only 10 words. No more, no less. Exactly 10 everytime
                 >Rule: 
@@ -218,7 +252,5 @@ export function prompt_wordVariations(props:ICluesVariations) {
                 Do the same for the string '${props.lastWord}' that will go concatenated to '${props.preText}. Don't forget to give 10 options and no extra information\n
                 
                 `;
-    
-
     return prompt;
 }
