@@ -159,6 +159,22 @@ export default function Keyobard(){
 
     }
 
+    function add_word(word:string){
+        if(displaySentenceEditor)
+        {
+            setText(preSentence + " " + word + " " + postSentence);
+            setBuffer("")
+            setHasWordGroup(false);
+            setDisplaySentenceEditor(false);
+        }
+        else{
+            // If not editing (but adding), the formula is text + buffer
+            setText(text + word + " ");
+            setHasWordGroup(false);
+        }
+
+    }
+
 
     /*  Remove last word in text */
     function removeLastWord(){
@@ -255,7 +271,40 @@ export default function Keyobard(){
                 {/* WORD GROUPS */}
                 <GridItem area="Menu" >
                     <Flex w="100%" h="100%" justifyContent={"space-around"} flexDir={"column"} overflow={"auto"}>
-                        <Flex h="50%" p="1rem" justifyContent={"space-evenly"} alignItems={"flex-start"} gap="0.5rem" flexWrap={"wrap"}  overflow={"auto"} >
+                        <Flex h="100%" p="1rem" justifyContent={"space-evenly"} alignItems={"flex-start"} gap="0.5rem" flexWrap={"wrap"}  overflow={"auto"} >
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("I")}}>I</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("it")}}>it</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("you")}}>you</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("we")}}>we</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("be")}}>be</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("my")}}>my</AccessibleButton>
+
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("the")}}>the</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("a")}}>a</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("an")}}>an</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("this")}}>this</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("that")}}>that</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("these")}}>these</AccessibleButton>
+
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("to")}}>to</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("and")}}>and</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("in")}}>in</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("not")}}>not</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("for")}}>for</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("of")}}>of</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("on")}}>on</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("with")}}>with</AccessibleButton>
+
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("would")}}>would</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("want")}}>want</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("need")}}>need</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("like")}}>like</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("do")}}>do</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("go")}}>go</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("have")}}>have</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("think")}}>think</AccessibleButton>
+                        </Flex>
+                        {/* <Flex h="50%" p="1rem" justifyContent={"space-evenly"} alignItems={"flex-start"} gap="0.5rem" flexWrap={"wrap"}  overflow={"auto"} >
                             <Text w="100%" textAlign={"left"} fontWeight={"bold"} color={"white"}>Categories</Text>
                             <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Pronouns") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Pronouns")}}>I, They...</AccessibleButton>
                             <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Modal Verbs") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Modal Verbs")}}>Can, Would...</AccessibleButton>
@@ -265,14 +314,14 @@ export default function Keyobard(){
                             <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Adverbs") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Adverbs")}}>Adverbs</AccessibleButton>
                             <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Prepositions") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Prepositions")}}>Prepositions</AccessibleButton>
                             <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={(hasWordGroup && wordGroup === "Conjunctions") ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{defineWordGroup("Conjunctions")}}>For, But...</AccessibleButton>
-                            {/* <AccessibleButton delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>Numbers</AccessibleButton> */}
+                            <AccessibleButton delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>Numbers</AccessibleButton>
                         </Flex>
 
 
 
 
 
-                        {/* CONTEXT */}
+                        CONTEXT
                         <Flex h="50%" p="1rem" justifyContent={"space-around"} gap="0.5rem" flexWrap={"wrap"}  overflow={"auto"}>
                             <Text w="100%" textAlign={"left"} fontWeight={"bold"} color={"white"}>Context</Text>
                             <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === CONTEXT_PROMPTS["House"])           ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["House"])           }}>    House</AccessibleButton>
@@ -284,7 +333,8 @@ export default function Keyobard(){
                             <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === CONTEXT_PROMPTS["Restaurant"])      ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["Restaurant"])      }}>    Restaurant</AccessibleButton>
                             <AccessibleButton buttonType={ButtonTypeEnum.ADD_CONTEXT} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  fontSize={fontSize} colorScheme={(hasContext && context === CONTEXT_PROMPTS["Family"])          ? "teal" :"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{  addPromptContenxt(CONTEXT_PROMPTS["Family"])      }}>    Family</AccessibleButton>
 
-                        </Flex>
+                        </Flex> 
+                        */}
                     </Flex>
                 </GridItem>
 
