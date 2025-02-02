@@ -46,7 +46,8 @@ export default function WordVariations(props:IProps){
 
         SuggestionsAPI("", promptContent)
         .then((response:string[])=>{
-            setVariations(response)
+            // setVariations(response)
+            setVariations(response.slice(0, 10)); //only take 10 variations
         })
     }, [lastWord])
     

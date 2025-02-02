@@ -392,6 +392,9 @@ export function prompt_wordVariations(props:ICluesVariations) {
                     
                 >Rule 
                     Do: Provide only 10 words. No more, no less. Exactly 10 everytime
+                >Rule
+                    Do: Sort the words by likelihood of complete the text ${props.preText}. The first one in list must be the most likely word.
+
                 >Rule: 
                     Do not wrap the words in quotation marks or any other symbol
                     The output has to be 10 words in a single line separated by simple space, as follows:
