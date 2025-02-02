@@ -180,8 +180,8 @@ export default function QWERTYKeyboard(props: IProps){
 
 
                 {/* PUNCTUATION */}
-            <GridItem area="punctuation" bgColor="blackAlpha.500" h="100%"   justifyContent={"center"} alignItems={"center"}  justifyItems={"center"} alignContent={"center"} >
-                <Flex  h="100%" w="70%" flexDir={"column"} justifyContent={"center"}  alignItems={"center"}>
+            <GridItem area="punctuation" bgColor="blackAlpha.500" h="100%"    justifyContent={"center"} alignItems={"center"}  justifyItems={"center"} alignContent={"center"} >
+                <Flex  h="100%" w={props.keyboardWidth+"%"} flexDir={"column"} justifyContent={"center"}  alignItems={"center"}>
                 {/* <Flex  h="100%" flexDir={"column"} justifyContent={"space-around"}> */}
                     
                     <Flex
@@ -204,6 +204,7 @@ export default function QWERTYKeyboard(props: IProps){
                     </Flex>
                 </Flex>
             </GridItem>
+            <GridItem bgColor={"blackAlpha.500"} area="empty"  ></GridItem>
         </>
     )
 }

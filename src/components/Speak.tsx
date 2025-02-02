@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import AccessibleButton from './AccessibleButton';
 import { ButtonTypeEnum } from './ENUMS/ButtonTypeEnum';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCog, faComment } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
   text: string;
@@ -65,7 +67,7 @@ export default function Speak(props: Props) {
 
   return (
     <div>
-      <AccessibleButton buttonType={ButtonTypeEnum.READ_TTS} session_time_stamp_string={props.session_time_stamp_string}  fontSize={props.fontSize} colorScheme={props.colorScheme} w="100%" delay={props.delay} onClick={() => { speak(props.text) }}>Read</AccessibleButton>
+      <AccessibleButton h="20" buttonType={ButtonTypeEnum.READ_TTS} session_time_stamp_string={props.session_time_stamp_string}  fontSize={props.fontSize} colorScheme={props.colorScheme} w="100%" delay={props.delay} onClick={() => { speak(props.text) }}><FontAwesomeIcon size="2x" icon={faComment} /></AccessibleButton>
     </div>
   );
 };

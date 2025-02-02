@@ -1,4 +1,4 @@
-import { Flex, Grid, GridItem, Text } from "@chakra-ui/react";
+import { Flex, Grid, GridItem } from "@chakra-ui/react";
 import '../index.css';
 import { useEffect, useRef, useState } from "react";
 import AccessibleButton from "./AccessibleButton";
@@ -10,6 +10,8 @@ import SecondaryMenus from "./secondaryMenus/SecondaryMenus";
 import { createNewSession } from "./firebase";
 import { ButtonTypeEnum } from "./ENUMS/ButtonTypeEnum";
 import WordVariations from "./WordVariations";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCog, faComment } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -46,9 +48,9 @@ export default function Keyobard(){
     // Settings
     const [displaySentenceEditor, setDisplaySentenceEditor] = useState<boolean>(false);
     const [displaySettings, setDisplaySettings] = useState<boolean>(false);
-    const [keyboardWidth, setKeyboardWidth] = useState<number>(70);
+    const [keyboardWidth, setKeyboardWidth] = useState<number>(80);
     const [clickSpeed, setClickSpeed] = useState<number>(1200);
-    const [fontSize, setFontSize] = useState<number>(17);
+    const [fontSize, setFontSize] = useState<number>(18);
 
 
     //--------------------------------------------------------------------------------------
@@ -223,14 +225,15 @@ export default function Keyobard(){
                 gridTemplateAreas={`
                         "Text Text Buttons"
                         "Menu Suggestions Suggestions"
-                        "Menu Keyboard Keyboard"
-                        "Menu punctuation punctuation"
+                        "Menu Keyboard cleanPage"
+                        "Menu punctuation empty"
                     `}
                 gridTemplateRows={'3fr 3fr 3fr 1fr'} 
-                gridTemplateColumns={'1fr 4fr 1fr'} 
+                gridTemplateColumns={'1fr 4fr 0.5fr'} 
                 h="100vh" 
                 w="100vw"
                 bgColor="blackAlpha.700" 
+                
             >
 
                 {/* TEXT */}
@@ -261,18 +264,16 @@ export default function Keyobard(){
                 
                 {/* TEXT BUTTONS */}
                 <GridItem area="Buttons" bgColor="white" m="0" p="1rem" w="100%" h="100%">
-                    <Flex flexDir={"column"} w="100%" h="100%" m="0" p="0" justifyContent={"space-around"}>
-                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION}  session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="red" w="100%" delay={clickSpeed} onClick={()=>{removeLastWord()}}>Delete word</AccessibleButton>
-                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION}  session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setText(""); setBuffer("")}}>Clear</AccessibleButton>
-                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION}  session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" delay={clickSpeed} onClick={()=>{setDisplaySettings(true)}}>Settings</AccessibleButton>
-                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION}  session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="blue" w="100%" delay={clickSpeed} onClick={()=>{guessSentence()}}>Guesser</AccessibleButton>
-                        <Speak session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} delay={clickSpeed} colorScheme="green" text={text} />
+                    <Flex flexDir={"column"} w="100%" h="100%" m="0" p="4" justifyContent={"space-around"}>
+                        <Speak session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} delay={clickSpeed} colorScheme="green" text={text}  />
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION}  session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" w="100%" h="20" delay={clickSpeed} onClick={()=>{setDisplaySettings(true)}}><FontAwesomeIcon size="2x" icon={faCog} /></AccessibleButton>
+                        {/* <AccessibleButton buttonType={ButtonTypeEnum.EDITION}  session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="blue" w="100%" delay={clickSpeed} onClick={()=>{guessSentence()}}>Guesser</AccessibleButton> */}
                     </Flex>                    
                 </GridItem>
 
                 {/* WORD GROUPS */}
-                <GridItem area="Menu" >
-                    <Flex w="100%" h="100%" justifyContent={"space-around"} flexDir={"column"} overflow={"auto"}>
+                <GridItem area="Menu"  >
+                    <Flex w="100%" h="100%" justifyContent={"space-around"} flexDir={"column"} overflow={"auto"} >
                         <Flex h="100%" p="1rem" justifyContent={"space-evenly"} alignItems={"flex-start"} gap="0.5rem" flexWrap={"wrap"}  overflow={"auto"} >
                             <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("I")}}>I</AccessibleButton>
                             <AccessibleButton buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("it")}}>it</AccessibleButton>
@@ -341,7 +342,7 @@ export default function Keyobard(){
                 </GridItem>
 
                 {/* Suggestions */}
-                <GridItem area="Suggestions" w="100%" h="100%">
+                <GridItem area="Suggestions" w="100%" h="100%" >
                         {
                             isGuesserSentenceSuggestion ?
                                 <SentenceGuesser session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} prompt={prompt} promptContent={promptContent} replaceText={setText} numberOfSentences={NUMBER_GUESSED_SENTENCES}/>
@@ -371,6 +372,11 @@ export default function Keyobard(){
                     text={text} setText={setText}
                     session_time_stamp_string={SESSION_TIME_STAMP_STRING} 
                 />
+                {/* cleanPage */}
+                <Flex  p="1" flexDir={"column"} alignItems={"center"} justifyContent={"space-evenly"} bgColor={"blackAlpha.400"}  >
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION}  session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="red" h="20%" w="100%" delay={clickSpeed} onClick={()=>{removeLastWord()}}>Delete word</AccessibleButton>
+                        <AccessibleButton buttonType={ButtonTypeEnum.EDITION}  session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} colorScheme="orange" h="20%" w="100%" delay={clickSpeed} onClick={()=>{setText(""); setBuffer("")}}>Clear</AccessibleButton>
+                </Flex>
             </Grid>
 
 

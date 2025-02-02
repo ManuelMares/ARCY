@@ -4,6 +4,8 @@ import AccessibleButton from "./AccessibleButton";
 import { ButtonTypeEnum } from "./ENUMS/ButtonTypeEnum";
 import { SuggestionsAPI } from "./SuggestionsAPI";
 import { prompt_wordCompletion } from "./Propmts";
+import { faCog, faComment, faSync } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface Iprops{
     text: string;
@@ -142,14 +144,15 @@ export default function BufferSuggestions(props:Iprops){
                 `}
             gridTemplateColumns={"5fr, 1fr"}
             gridTemplateRows={"1fr 1fr 1fr"}
+
         >
-            <GridItem area={"lines"} w="100%" h="100%">
-                <Flex alignItems={"center"} justifyContent="space-around" w="100%" h="100%" flexWrap={"wrap"}>
+            <GridItem area={"lines"} w="100%" h="100%" alignItems={"center"} justifyContent={"center"}>
+                <Flex alignItems={"center"} justifyContent="space-around" w="70%" h="100%" flexWrap={"wrap"} ms="12%">
                     <Flex alignItems={"center"} justifyContent="space-around" w="100%">
                         {
                             line1.map((word:string, i:number)=>{
                                 return(
-                                    <AccessibleButton session_time_stamp_string={props.session_time_stamp_string} text={props.text} buttonType={BUTTON_TYPE} fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l1_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} minW="8rem" >{word}</AccessibleButton>
+                                    <AccessibleButton session_time_stamp_string={props.session_time_stamp_string} text={props.text} buttonType={BUTTON_TYPE} fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l1_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} minW="10rem" h="4rem" >{word}</AccessibleButton>
                                 )
                             })
                         }
@@ -159,7 +162,7 @@ export default function BufferSuggestions(props:Iprops){
                             line2.map((word:string, i:number)=>{
                                 if(word){
                                     return(
-                                        <AccessibleButton session_time_stamp_string={props.session_time_stamp_string} text={props.text} buttonType={BUTTON_TYPE} fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l2_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} minW="8rem">{word}</AccessibleButton>
+                                        <AccessibleButton session_time_stamp_string={props.session_time_stamp_string} text={props.text} buttonType={BUTTON_TYPE} fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l2_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} minW="10rem" h="4rem">{word}</AccessibleButton>
                                     )
                                 }else return null;
                             })
@@ -170,7 +173,7 @@ export default function BufferSuggestions(props:Iprops){
                             line3.map((word:string, i:number)=>{
                                 if(word){
                                     return(
-                                        <AccessibleButton session_time_stamp_string={props.session_time_stamp_string} text={props.text} buttonType={BUTTON_TYPE} fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l3_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} minW="8rem">{word}</AccessibleButton>
+                                        <AccessibleButton session_time_stamp_string={props.session_time_stamp_string} text={props.text} buttonType={BUTTON_TYPE} fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l3_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} minW="10rem" h="4rem">{word}</AccessibleButton>
                                     )
                                 }else return null;
                             })
@@ -179,7 +182,7 @@ export default function BufferSuggestions(props:Iprops){
                 </Flex>
             </GridItem>
             <GridItem area={"buttons"} w="100%" h="100%">
-                <AccessibleButton session_time_stamp_string={props.session_time_stamp_string} buttonType={ButtonTypeEnum.ADD_CONTEXT} text={props.text} fontSize={props.fontSize} delay={500} onClick={()=>{updateSuggestions()}}>Refresh</AccessibleButton>
+                <AccessibleButton session_time_stamp_string={props.session_time_stamp_string} buttonType={ButtonTypeEnum.ADD_CONTEXT} text={props.text} fontSize={props.fontSize} delay={500} onClick={()=>{updateSuggestions()}} h="4rem" w="5rem"><FontAwesomeIcon icon={faSync} size="2x" /> </AccessibleButton>
             </GridItem>
 
         </Grid>
