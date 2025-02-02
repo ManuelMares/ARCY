@@ -244,7 +244,9 @@ export default function Keyobard(){
                                     )
                                 })
                             }
-                            <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} minW={"0.5rem"} p="0" m="0" bgColor="teal" delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>{buffer}</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize}  minW={"0.5rem"} p="0" m="0" bgColor="white" onClick={()=>{console.log("clicked!!")}}>{buffer}</AccessibleButton>
+                            {/* <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} minW={"0.5rem"} p="0" m="0" bgColor="teal" textColor={"white"} delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>{buffer}</AccessibleButton> */}
+                            {/* <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} minW={"0.5rem"} p="0" m="0" bgColor="teal" delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>{buffer}</AccessibleButton> */}
                         </Flex>
                         <WordVariations 
                             context={context} 

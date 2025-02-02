@@ -10,11 +10,12 @@ export async function SuggestionsAPI(prompt:string, promptContent:string){
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${OPEN_AI_KEY}`,
             };
+            console.log(promptContent)
 
             const requestBody = {
                 // model: `gpt-4`,
-                // model: `gpt-4o-mini`,
                 model: `gpt-4o-mini`,
+                // model: `gpt-o3-mini`,
                 messages: [
                     {
                         role: 'system', 

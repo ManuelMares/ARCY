@@ -170,20 +170,6 @@ export function prompt_wordCompletion(props:ICluesCompletion){
                         complete it with 'back', since 'headed back' is a very common sentence.
                         'good'
                         complete it with 'bye', since 'good bye' is an extremely common sentence.
-                    End of rules.
-                    Follow the previous rules to make the best possible suggestions. Here are some example of some suggestion tasks:
-                    Example 1
-                    text: we all went
-                    possible suggestions
-                    the -> bad. 'we all went the' makes no sense. it need the word 'to' in between
-                    park -> you cannot just 'went noun', you need the word 'to' in between
-                    other bad words. No nouns, such as they, we, he she, park, beach, etc.
-                    to -> The very best option. 'we all went to' is a good sentence that makes sense since it introduces a noun'
-                    where -> 'we all went where' also makes sense'
-                    home -> This is one of the few nouns that do not need 'to' before to makes sense. 'We all went home' makes sense. 'we all went park' makes NO sense.
-                    today -> This and other similar words make sense 'we all went today'
-                    other good words: yesterday tomorrow fast with for, etc.
-
                     >Rule
                         IF: Text ends with a space (indicating a new word is being typed).
                         DO: Suggest contextually appropriate words based on previous word(s). For example:
@@ -215,6 +201,30 @@ export function prompt_wordCompletion(props:ICluesCompletion){
                         a, an, am, in, by, my, at, is, was, but, also, it, I, the, their.
                     Suggestion: If you see we are talking about the past, change the options to that: was, did, etc.
                     Suggestion. Match the style. If the person does not use a lof of adjectives, do not suggest them. same with other groups of words.
+                    
+                    End of rules.
+                    Follow the previous rules to make the best possible suggestions. Here are some example of some suggestion tasks:
+                    Example 1
+                    text: we all went
+                    possible suggestions
+                    the -> bad. 'we all went the' makes no sense. it need the word 'to' in between
+                    park -> you cannot just 'went noun', you need the word 'to' in between
+                    other bad words. No nouns, such as they, we, he she, park, beach, etc.
+                    to -> The very best option. 'we all went to' is a good sentence that makes sense since it introduces a noun'
+                    where -> 'we all went where' also makes sense'
+                    home -> This is one of the few nouns that do not need 'to' before to makes sense. 'We all went home' makes sense. 'we all went park' makes NO sense.
+                    today -> This and other similar words make sense 'we all went today'
+                    other good words: yesterday tomorrow fast with for, etc.
+
+                    Example 2
+                    text: I am a very smart student
+                    Possible suggestions:
+                    that -> great suggestion. It makes sense because we are going to describe the student
+                    I -> bad suggestion. It would make sense if there was a comma in between, but "I am a very smart student I" makes no sense
+                    other bad suggestions:
+                    why where am is have think
+                    good suggestions:
+                    and  when if only like so
                     
                     \n `;
     } 
@@ -290,7 +300,31 @@ export function prompt_wordCompletion(props:ICluesCompletion){
                     bad -> this ia also an adjective for the day. 'the day was bad' is a great option
                     other good options: being boring busy between both beginning
                     `
-            prompt += `Now I will give you word options to rank according to which ones complete the paragraph better. Here is the paragraph: '${props.preText}'.\n\n`;
+            prompt += `Now I will give you word options to rank according to which ones complete the paragraph better. Here is the paragraph: '${props.preText}'.
+            
+            Very important, if the word that I give you is correct, but in the wrong tense or conjugation, fix it:
+            example 
+            text: She
+            options: love like think
+            then add those three words but in the third person (loves, likes, thinks). The words are perfect, they just need to be fixed to fit the third person
+
+            Example 2
+            text: yesterday I woke up and I 
+            options: eat see notice
+            then change those words for ate, saw, noticed. These words are okay, they just needed to be in the right tense.
+
+            Example 3
+            text: We love to 
+            options: ate plays
+            then give the words: eat, play
+
+            Example 3
+            text: We love 
+            options: ate plays
+            then give the words: eating, playing
+            these words make sense because 'we love eating' is correct, and the word 'ate' can be transformed to 'eating'. All the three words fit properly when shifted to the right tense.
+            
+            \n\n`;
             for (let index = 0; index < word_options.length; index++) {
                 const option = word_options[index];
                 // prompt += `Option ${index + 1}: ${option}\nWith this option, the text sounds like: '${props.preText} ${option}'.\n\n`;
@@ -444,3 +478,8 @@ export function prompt_wordVariations(props:ICluesVariations) {
                 `;
     return prompt;
 }
+
+
+
+
+/// Note: it is bad suggesting new words because the best word might be 'loves', and the given word is 'loves'
