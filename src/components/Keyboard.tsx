@@ -11,25 +11,25 @@ import { createNewSession } from "./firebase";
 import { ButtonTypeEnum } from "./ENUMS/ButtonTypeEnum";
 import WordVariations from "./WordVariations";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faComment } from '@fortawesome/free-solid-svg-icons';
+import { faCog } from '@fortawesome/free-solid-svg-icons';
 
 
 
 
-const CONTEXT_PROMPTS = {
-    "House":            "I am going to talk about stuff I do in my house, such as -I watched tv- or -I ate dinner with my parents- or -I will go home-",
-    "Story Telling":    `I am going to talk about things that happened before, such as  "I did my homework...", "I went to the concert...", "last month I visited my parent in Chihuahua..."`,
-    "School":           `I am going to talk about school relate stuff, such as "I have an exam tomorrow...", "I had an exam yesterday...", "I have to complete an essay on..."`,
-    "Profession":       `Profession`,
-    "Social":           `I will talk with my friends about our day to day life. The sentence will vay a lot. I just want to ask basic questions to my friends, and to talk about our lives. 
-                        Maybe with sentences such as "How are you?", "Would you like to go eat?", "Do you know if we have classes?". 
-                        The sentence will be very different, but it will be to talk about my friends in short talks. 
-                        In general, the suggestions you give me must be useful to have casual conversation with my friends. 
-                        I usually talk about school, house, what I did last few weeks, or what I will do in few weeks or on vacations. Or simply of what I want to do.`,
-    "Store":            `Store`,
-    "Family":            `Family`,
-    "Restaurant":       `I will order food at a restaurant, with sentences similar to "I would like to order...",  "I want an...", "May I have one..."`,
-}
+// const CONTEXT_PROMPTS = {
+//     "House":            "I am going to talk about stuff I do in my house, such as -I watched tv- or -I ate dinner with my parents- or -I will go home-",
+//     "Story Telling":    `I am going to talk about things that happened before, such as  "I did my homework...", "I went to the concert...", "last month I visited my parent in Chihuahua..."`,
+//     "School":           `I am going to talk about school relate stuff, such as "I have an exam tomorrow...", "I had an exam yesterday...", "I have to complete an essay on..."`,
+//     "Profession":       `Profession`,
+//     "Social":           `I will talk with my friends about our day to day life. The sentence will vay a lot. I just want to ask basic questions to my friends, and to talk about our lives. 
+//                         Maybe with sentences such as "How are you?", "Would you like to go eat?", "Do you know if we have classes?". 
+//                         The sentence will be very different, but it will be to talk about my friends in short talks. 
+//                         In general, the suggestions you give me must be useful to have casual conversation with my friends. 
+//                         I usually talk about school, house, what I did last few weeks, or what I will do in few weeks or on vacations. Or simply of what I want to do.`,
+//     "Store":            `Store`,
+//     "Family":            `Family`,
+//     "Restaurant":       `I will order food at a restaurant, with sentences similar to "I would like to order...",  "I want an...", "May I have one..."`,
+// }
 export default function Keyobard(){
     // Variables
     const [text, setText] = useState<string>(`At the lies that hang like cobwebs 
@@ -46,14 +46,14 @@ Soft as the shadow of a falling leaf:
     const bufferRef = useRef("");
 
     // Texts used for AI prompts
-    const [prompt, setPrompt] = useState<string>("");
-    const [promptContent, setPromptContent] = useState<string>("");
+    const [prompt] = useState<string>("");
+    const [promptContent] = useState<string>("");
     const [isReplacingBuffer, setIsReplacingBuffer] = useState<boolean>(false);
     const [hasWordGroup, setHasWordGroup] = useState<boolean>(false);
-    const [wordGroup, setWordGroup] = useState<string>("");
+    const [wordGroup] = useState<string>("");
     // Context
-    const [hasContext, setHasContext] = useState<boolean>(false);
-    const [context, setContext] = useState<string>("");
+    const [hasContext] = useState<boolean>(false);
+    const [context] = useState<string>("");
     // Settings
     const [displaySentenceEditor, setDisplaySentenceEditor] = useState<boolean>(false);
     const [displaySettings, setDisplaySettings] = useState<boolean>(false);
@@ -108,47 +108,47 @@ Soft as the shadow of a falling leaf:
         console.log(bufferRef.current)
     },[buffer]);
 
-    function defineWordGroup(group:string){
-        if(wordGroup == group){
-            setHasWordGroup(false);
-        }else{
-            setHasWordGroup(true);
-            setWordGroup(group);
-        }
-    }
-    function addPromptContenxt(value:string){
-        if(value == context){
-            setHasContext(false);
-        }else{
-            setHasContext(true);
-            setContext(value);
-        }
-    }
+    // function defineWordGroup(group:string){
+    //     if(wordGroup == group){
+    //         setHasWordGroup(false);
+    //     }else{
+    //         setHasWordGroup(true);
+    //         setWordGroup(group);
+    //     }
+    // }
+    // function addPromptContenxt(value:string){
+    //     if(value == context){
+    //         setHasContext(false);
+    //     }else{
+    //         setHasContext(true);
+    //         setContext(value);
+    //     }
+    // }
     
 
-    function guessSentence(){
-        setIsReplacingBuffer(false);
-        setPrompt(`
-            You are a helpful text completion system for a person who cannot talk or move. She relies completely on you for communication. 
-            She is a friendly person and likes to talk casually and keep it short. 
-            She is a student in spanish department. She likes to talk to her friends and family.
+    // function guessSentence(){
+    //     setIsReplacingBuffer(false);
+    //     setPrompt(`
+    //         You are a helpful text completion system for a person who cannot talk or move. She relies completely on you for communication. 
+    //         She is a friendly person and likes to talk casually and keep it short. 
+    //         She is a student in spanish department. She likes to talk to her friends and family.
             
-            You are a helpful sentences auto-completer. I will give you few words from a sentence, and you will try to guess what the complete sentence is.
-            Your answer will include no extra words or explanations, just ${NUMBER_GUESSED_SENTENCES} sentences separated by semicolon.
-            Example: If you give you "I water", four guesses for the original complete sentence are:
-            "I want water;I drink water;I need water;I fell in the water".
-            Do not add quote marks
-            I need sentences that starts with "I", but also has "am", "want", "need", "would" or similar things. Sentences should be something she would use in daily life with friends, family and in school.
-        `);
-        setPromptContent(`
-            these are the words you will use to guess the original complete sentence: "${text}". 
-            ${context === "" ? "" : "Here is a clue for you: The context of the original sentence is: "+context+".\n"} 
-            Now, please give me 4 possible options for what the original complete sentence might be considering my clues. Remember the format: ${NUMBER_GUESSED_SENTENCES} sentences separated by semicolons.
-            Also, all suggestions must be in English.
-        `);
+    //         You are a helpful sentences auto-completer. I will give you few words from a sentence, and you will try to guess what the complete sentence is.
+    //         Your answer will include no extra words or explanations, just ${NUMBER_GUESSED_SENTENCES} sentences separated by semicolon.
+    //         Example: If you give you "I water", four guesses for the original complete sentence are:
+    //         "I want water;I drink water;I need water;I fell in the water".
+    //         Do not add quote marks
+    //         I need sentences that starts with "I", but also has "am", "want", "need", "would" or similar things. Sentences should be something she would use in daily life with friends, family and in school.
+    //     `);
+    //     setPromptContent(`
+    //         these are the words you will use to guess the original complete sentence: "${text}". 
+    //         ${context === "" ? "" : "Here is a clue for you: The context of the original sentence is: "+context+".\n"} 
+    //         Now, please give me 4 possible options for what the original complete sentence might be considering my clues. Remember the format: ${NUMBER_GUESSED_SENTENCES} sentences separated by semicolons.
+    //         Also, all suggestions must be in English.
+    //     `);
 
-        setIsGuesserSentenceSuggesion(true);
-    }
+    //     setIsGuesserSentenceSuggesion(true);
+    // }
 
 
     /*    Drops buffer and adds given word to text    */
@@ -256,7 +256,7 @@ Soft as the shadow of a falling leaf:
                                     )
                                 })
                             }
-                            <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize}  minW={"0.5rem"} p="0" m="0" bgColor="white" onClick={()=>{console.log("clicked!!")}}>{buffer}</AccessibleButton>
+                            <AccessibleButton buttonType={ButtonTypeEnum.EDITION} delay={clickSpeed} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize}  minW={"0.5rem"} p="0" m="0" bgColor="white" onClick={()=>{console.log("clicked!!")}}>{buffer}</AccessibleButton>
                             {/* <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} minW={"0.5rem"} p="0" m="0" bgColor="teal" textColor={"white"} delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>{buffer}</AccessibleButton> */}
                             {/* <AccessibleButton buttonType={ButtonTypeEnum.EDITION} session_time_stamp_string={SESSION_TIME_STAMP_STRING} fontSize={fontSize} minW={"0.5rem"} p="0" m="0" bgColor="teal" delay={clickSpeed} onClick={()=>{console.log("clicked!!")}}>{buffer}</AccessibleButton> */}
                         </Flex>

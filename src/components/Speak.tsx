@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import AccessibleButton from './AccessibleButton';
 import { ButtonTypeEnum } from './ENUMS/ButtonTypeEnum';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faComment } from '@fortawesome/free-solid-svg-icons';
+import { faComment } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
   text: string;

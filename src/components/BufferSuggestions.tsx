@@ -4,7 +4,7 @@ import AccessibleButton from "./AccessibleButton";
 import { ButtonTypeEnum } from "./ENUMS/ButtonTypeEnum";
 import { SuggestionsAPI } from "./SuggestionsAPI";
 import { prompt_wordCompletion } from "./Propmts";
-import { faCog, faComment, faSync } from '@fortawesome/free-solid-svg-icons';
+import { faSync } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface Iprops{
