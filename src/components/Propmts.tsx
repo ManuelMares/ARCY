@@ -15,28 +15,133 @@ type FuseResult<T> = {
 // List of words to autocomplete
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const wordList = words.getMostPopular(10000);
+// const wordList = words.getMostPopular(10000);
+const paragraph = [
+    "Hi",
+    "I",
+    "am",
+    "27",
+    "years",
+    "old",
+    "and",
+    "I",
+    "am",
+    "going",
+    "to",
+    // "describe",
+    "my",
+    // "daily",
+    // "routine",
+    "This",
+    "morning",
+    "I",
+    "woke",
+    // "up",
+    "at",
+    // "eight",
+    // "AM",
+    "as",
+    // "usual",
+    "I",
+    // "always",
+    "eat",
+    "breakfast",
+    "at",
+    // "eight",
+    "thirty",
+    "so",
+    "I",
+    "have",
+    // "already",
+    "eaten",
+    "Today",
+    "is",
+    "a",
+    "little",
+    // "different",
+    "because",
+    "I",
+    "have",
+    "a",
+    "meeting",
+    "with",
+    "a",
+    // "research",
+    // "team",
+    "We",
+    "have",
+    "been",
+    "working",
+    "on",
+    "a",
+    // "project",
+    "to",
+    "hopefully",
+    "improve",
+    "the",
+    // "tools",
+    "I",
+    "use",
+    "to",
+    // "communicate",
+    "They",
+    "have",
+    "told",
+    "me",
+    "that",
+    "the",
+    "hopes",
+    "to",
+    "have",
+    "made",
+    // "progress",
+    // "by",
+    "December",
+    "of",
+]
 
-// Initialize Fuse with options
-const options = {
-    includeScore: true,
-    threshold: 0.2, // Lower this number for stricter matching
-    minMatchCharLength: 1,
-    keys: ['word'],
-    // useExtendedSearch: true,
-};
-
-const fuse = new Fuse(wordList.map((word:string) => ({ word })), options);
-
-// Function to get matches
-export function getMatches(input:string){
-    const results: FuseResult<WordItem>[] = fuse.search(input);
-    // console.log(results)
-    return results.map((result:FuseResult<WordItem>)=>result.item.word);
+function getWordList(paragraph:string[]){
+    const answer = []
+    for (let index = 0; index < paragraph.length; index++) {
+        const word = paragraph[index];
+        answer.push(word.toLowerCase())
+    }
+    const set = new Set(answer);
+    return [...set];
 }
 
-function getPotenialWords(buffer:string, limit: number){
+const wordList = getWordList(paragraph)
+// Initialize Fuse with options
+// const options = {
+//     includeScore: true,
+//     threshold: 0.2, // Lower this number for stricter matching
+//     minMatchCharLength: 1,
+//     keys: ['word'],
+//     // useExtendedSearch: true,
+// };
+
+// const fuse = new Fuse(wordList.map((word:string) => ({ word })), options);
+// const fuse = new Fuse(wordList, options);
+
+// Function to get matches
+export function getMatches(prefix:string){
+    //fuse solution
+    // const results: FuseResult<WordItem>[] = fuse.search(input);
+    // console.log(">>>> in function Matches: ", input, results)
+    // // return results.map((result:FuseResult<WordItem>)=>result.item.word);
+    // return results.map((result:FuseResult<WordItem>)=>result.item);
+
+
+    // naive matching
+    console.log("--->>> prefix, starts with: ", prefix, paragraph)
+    const matches =  wordList.filter(word => word.startsWith(prefix));
+    console.log(">>>> in function Matches: ", prefix, matches)
+    return matches
+}
+
+function getPotentialWords(buffer:string, limit: number){
     const matches = getMatches(buffer);
+    console.log(">>>> delivered Matches: ", matches)
     const options = []
     for (let index = 0; index < matches.length; index++) {
         if(matches[index].toLowerCase().startsWith(buffer.toLowerCase()))
@@ -64,282 +169,257 @@ interface ICluesVariations{
     lastWord: string,
 }
 
-// Word Completions
+// Word Completions -> context, preText, lastWord
 export function prompt_wordCompletion(props:ICluesCompletion){
     // Format context
     let prompt = '';
-    const word_options = getPotenialWords(props.buffer, 30);
+    const word_options = getPotentialWords(props.buffer, 30);
+    const number_words = word_options.length
 
     // Add context
     if (props.context) 
-        prompt += `-> context of the guesses\nThe context is ${props.context}. This means that your answer must be related to ${props.context}.\n`;
-    
-
-    // Empty Buffer
-    const preText = props.preText
-    if (props.buffer === "" || word_options.length == 0) {
-        prompt += ` >Task: Your job is to give me 15 words that better continue the following text '${preText}'.
-                        1) Return 15 words. No more or less. Exactly 15 words
-                        2) The format is the 15 words one after the other separated by a simple space, with no decorations such as quotation marks
-                            Example:
-                                text -> Hello, how 
-                                answer -> are do can is did to could will long large far couldn't come
-                    Also consider this set of words know as the arcy_specials = {need, want, like, don't, do, think, have}
-                    the following rules are strong suggestions of the output required. If you cannot follow it, that is okay. Just make the best prediction possible
-                    > Rule: Sentence start
-                        condition: pretext ('${preText}' in this case) is empty, or the last character is a period ., indicating that the next character is the beginning of a new sentence
-                                    for example, the pretext can be 'Anna and I went to the park.' Here we apply this rule because the sentence ended in a period
-                                    example 2 the pretext is ''. Here we apply this rule because the previous text is empty, indicating a new sentence is going to start
-                        output: 
-                        5 of the suggested words must be nouns that have appeared previously in the text
-                        5 of the results must be question words, such as what, who, when and how
-                        5 options must be pronouns such as We, they, he, she. chose the most likely ones based on previous text
-                        If any of these categories do not have 5 words, use the left options to suggest other types of words, until you read 15 options
-                        Additionally, make sure these features are guaranteed:
-                            - All the words must start with capital
-                            - The options are sorted from the most likely one to the least likely one
-                    > Rule: after a noun
-                        condition: When the previous word is a noun
-                        output: 
-                            5 of the suggestions must be different forms of the 'to be' verb
-                                Within these options, make sure to guarantee that 
-                                - There is number agreement. For instance
-                                    "Anna and I" -> we were went will. Each of these option makes sense because we are talking about two people. We provide different conjugation for different tenses, but we are still in 'we' and plural
-                                    example two: 
-                                    "I" -> was am will went were. Each of these options make sense because they are used with the noun 'I' and make sense. They include different tenses.
-                                - There must be tense agreement. For instance
-                                    'Yesterday they' -> did went were. Each of these options make sense because 'yesterday' indicates we are talking about the past
-                            5 of the suggestions must be verbs
-                                Example: 'I' -> went did run eat sing. these words make sense because they are verbs.
-                            5 of the suggestions must be from the arcy_specials set. these options must be there. Do not leave them out. Always include them after a noun. always!
-                                - there must be number and tense agreement. For example
-                                'She' -> wants needs likes doesn't does thinks has. these options make sense because it is in third person
-                                'yesterday I' -> needed wanted liked didn't did thought had. these options match the first person 'I', and the past tense suggested by 'yesterday'.
-                            Add conjugation of previous options
-                    > Rule: after a verb
-                        condition: the last word is a verb, such as in 'I run' 'Alice and I went'
-                        output: limit the number of adjectives and adverbs to maximum 5 options. Prefer to suggest prepositions
-                    > Rule: Prepositions
-                        condition: the last word was a preposition, as in 'I throw the book into', or 'I got in'. these two sentences end in prepositions
-                        output:
-                        5 of the suggestions must be articles. For instance
-                        'She put her cellphone in' -> the a. these two options make sense after the word 'in'
-                        5 options must be nouns. Specially if there were used before For instance
-                        'I went to' -> home downtown. these two options make sense because they are very popular nouns
-                        'I love Ihop. yesterday I went to' -> Ihop. this makes sense because Ihope is a noun mentioned before, and that can be used after the word 'to'. 'I' does not make sense here even when it is a noun.
-                    > Rule: a, an
-                        condition: the sentence ends in a or and. For instance in the sentence 'They want a'.
-                        output:
-                            suggest nouns that were used before in the sentence. Example
-                            "Ali loves chocolate, cars and drawing. Today at the candy store she got a" -> chocolate. This makes sense because you can buy chocolate in the candy store. you cannot buy cars or drawings there.
-                            "Ali loves chocolate, cars and drawing. Today at the arts store she got a" -> pencil brush painting draw. these words make sense because Ali loves drawing, and pencils, brush, painting and drawings can be bought at the art store where she is. Not cars or chocolate.
-                            5 options must be other nouns that make sense. Example
-                            'I wanna go home. I need a' -> ride taxi bus train. Because these nouns can take the person home, where they want to go.
-                            'I am very hungry. I want an' -> apple almond anchovy. these words make sense because the word 'an' suggest that the following must start with 'a', and the previous sentence 'I am very hungry' indicates we are going to talk about food. All the options are food that start with the letter 'a'.
-                            add words that are commonly used after a or an
-                            'I had a' -> lot few ton significant. words like 'lot' are commonly prefaced by the words 'a', so it has to be included here for sure.
-                    > rule: The
-                        condition: the last word is 'the'. Example 'today we went to the'. the sentence ends in 'the'
-                        5 options must be adjectives if they make sense
-                        5 options must be nouns
-                        include nouns that have been mentioned before if they make sense. Example
-                        'Anna and carlos went to the park. They saw cars and buses. They eat candy, cake and meat. Then they went home near the statue. They got hungry and wished they ate more of the' -> cake candy meat. these options make sense because although the sentence have many nouns, the last sentence indicate they want to ate more, so the only options that are valid must be foods.
-                    > Rule Indirect object
-                        5 words must be connectors words from the fanboys (for, and, nor, but, yet, our, so). Only the ones that make sense.
-                        5 words must be adverbs
-                    > Rule: comma
-                        condition the sentence ends in comma. For instance 'I want food,', 'yesterday you went downtown,'. The last character in these two sentences is ,
-                        4 of the options must be: and, but or, so. This condition is not options. These must be the first four options.
-                        5 options must be pronouns
-                        the options must include conjunction words. Include conjunctions.
-                    > rule:
-                    after a possessive word such as your our yours my mine, use a noun
-                    'I went to the park to see our' -> friends family pets classmates dates. Notice that all these words are nouns, but since we are are going to see things are for us, date has to be plural
-                    'I want my' ->  money time computer food
-                    > rule: hope
-                        after the word hope, include these suggestions
-                        I we you they he she that this it everything everyone 
-                    > rule
-                        after it, make sure you suggest these two options: is was
-                    > use common sentences autocompletion
-                        example 1
-                        'as' 
-                        complete it with 'soon', since 'as soon' is a very common sentence.
-                        example 2
-                        'we headed'
-                        complete it with 'back', since 'headed back' is a very common sentence.
-                        'good'
-                        complete it with 'bye', since 'good bye' is an extremely common sentence.
-                    >Rule
-                        IF: Text ends with a space (indicating a new word is being typed).
-                        DO: Suggest contextually appropriate words based on previous word(s). For example:
-                            After pronouns: suggest verbs (e.g., I -> am, He -> runs, They -> are)
-                            After articles: suggest nouns (e.g., The -> dog, A -> car, An -> apple)
-                    >Rule 
-                        IF: the text is empty, OR is the beginning of a new sentence (ends in a period)
-                        DO:
-                            5 pronouns, i.e. I, he, they, she, it, we, my. Specially consider pronouns that reflect the noun used previously
-                            5 articles and nouns, i.e. the, hello, today, yesterday, by
-                            5 question words, i.e. how, what, why, when
-                    >Rule
-                        DO: ensure sentence consistency. For example
-                            subject-verb agreement: (e.g. he -> runs)
-                            noun-pronoun agreement: (e.g. the girl lost -> her)
-                            tense consistency: (e.g. the girl lost her bag. She -> was)
-                    >Rule
-                        IF: The sentence begins with certain phrases.
-                        DO: Predict the common continuation (e.g., "Would you" -> like, mind, be)
-                    >Rule 
-                        DO: Match the vocabulary style. 
-                        If the vocabulary is relaxed, the suggestions must be relaxed. If formal, add more formal words.
-                    >Rule 
-                        IF: the text is empty, OR is the beginning of a new sentence (ends in a period)
-                        DO: Start the word in capital
-                    >Rule:
-                    >Rule: 
-                        DO: When possible, only suggest words like nouns and adjectives after having suggest at least 5 short words that help connect ideas, such as
-                        a, an, am, in, by, my, at, is, was, but, also, it, I, the, their.
-                    Suggestion: If you see we are talking about the past, change the options to that: was, did, etc.
-                    Suggestion. Match the style. If the person does not use a lof of adjectives, do not suggest them. same with other groups of words.
-                    
-                    End of rules.
-                    Follow the previous rules to make the best possible suggestions. Here are some example of some suggestion tasks:
-                    Example 1
-                    text: we all went
-                    possible suggestions
-                    the -> bad. 'we all went the' makes no sense. it need the word 'to' in between
-                    park -> you cannot just 'went noun', you need the word 'to' in between
-                    other bad words. No nouns, such as they, we, he she, park, beach, etc.
-                    to -> The very best option. 'we all went to' is a good sentence that makes sense since it introduces a noun'
-                    where -> 'we all went where' also makes sense'
-                    home -> This is one of the few nouns that do not need 'to' before to makes sense. 'We all went home' makes sense. 'we all went park' makes NO sense.
-                    today -> This and other similar words make sense 'we all went today'
-                    other good words: yesterday tomorrow fast with for, etc.
-
-                    Example 2
-                    text: I am a very smart student
-                    Possible suggestions:
-                    that -> great suggestion. It makes sense because we are going to describe the student
-                    I -> bad suggestion. It would make sense if there was a comma in between, but "I am a very smart student I" makes no sense
-                    other bad suggestions:
-                    why where am is have think
-                    good suggestions:
-                    and  when if only like so
-                    
-                    \n `;
-    } 
-    // With Buffer
-    else 
-    {
-        
         prompt += `
-            >Task
-                Your job is to, given a set of words, select those words that better continue the following text '${props.preText}'
-                1) Return 15 words. No more or less. Exactly 15 words
-                2) The format is the 15 words one after the other separated by a simple space, with no decorations such as quotation marks
-                    Example:
-                        text -> Hello, how 
-                        answer -> are do can is did to could will long large far couldn't come
-                >Most important Rule!!
-                    All the words must start with ${props.buffer}. If an optional word does not start with ${props.buffer}, discard it. Even if it was your added suggestion.
-                >Rule
-                    IF: You are given less than 15 words
-                    DO: Add suggestion words that are not repeated until there are 15 words in total
-                >Rule
-                    Do: Sort the words by likelihood of complete the text ${props.preText}. The first one in list must be the most likely word.
+        >task: You are a very helpful writing assistant. Your job is the following:
+        you will receive a 'text' the 'beginning of a new word', and a list of 'possible words'. 
+        Your job is to chose the new word from the possible words based on the text.
+        The result is that the beginning of the new word will be replaced by the word you chose, and this text + chosen word must make the most sense.
+        Because it is not possible to know which word will be used you must suggest 15 words in total, sorted from the most likely to the least likely to be used.
+        But those 15 words have to be the most likely ones to be used.
+        > example
+        text: 'Hello mrs Smith. I just finished cutting the grass. I was wondering if you also need help cutting the branches from the'
+        beginning of the new word: 't'
+        possible words: three to two too task tune tuna ton tons travel trip tornado tree trash thunder tobacco toyon toothache titi
+        tamaricaceae thornless tulip texas tupelo tallow tamarac tamarind tara temu torreya tabebui trees thuya turkey terminalia Teak Toog Trichilia Turpentine  sun silver
+        answer: trees tree tulip tamarind tupelo thuya tamarac tamaricaceae tallow tara taratorreya tabebui terminalia Teak Toog
+        explanation: the first option in the list is the word 'trees', because the text indicates that somebody is already cutting the grass, and asks if mrs. Smith 
+        wants help finishing cutting something else, other things that can be cut and are similar to grass are tree.
+        The second option is 'tree', for the same reasons as the first option, and the singular is just as likely to be word the user will be using after, so that is why these two words 'tree' and 'trees' 
+        are at the top. The other thirteen options are trees names, starting with the most common names because they are more likely to be talking about popular trees.
+        notice that I did not chose words like three, to, too, task, ton, tons, etc., because the sentence asks '...need help cutting the branches from', and it is not possible to cut branches from 
+        three, to, too, task, ton, or tons. These other words make no sense. Words like tornado also make no sense. They cannot be cut, they also have nothing to do with cutting grass.
+        Cutting tree make sense when talking about cutting grass, and that is why we chose tree-related words starting from the most like ones 'tree' and 'trees'.
+        Finally, notice that the words 'sun' and 'silver' were never considered an option, because the beginning of the new word is 't', and none of those words start with the letter 't', whereas
+        'tree' and 'trees' do start with the letter 't'.
+        Using the first option, the result would be read as
+        'Hello mrs Smith. I just finished cutting the grass. I was wondering if you also need help cutting the branches from the trees'.
 
-                >Rule: Ensure grammatical correctness
-                    DO: Identify the part of speech that is most likely to follow the last word in '${props.preText}'. Prioritize words that fit grammatically and contextually.
-                >Rule: Remove words that do not logically follow the sentence
-                    DO: Do not include words that disrupt meaning or create ungrammatical phrases.
-                >Rule
-                    If the word that completes ${props.buffer} the most likely is not among the suggestions, replace the less likely options for the right word.
-                    Be active doing this
-                    Example
-                    text -> Science is an 
-                    starts with -> intr
-                    list of words -> Introduction introspective intrusive intransigeantly intracerebrally intramolecular intracutaneaos intractability intracellular  introspect intrapersonal intradermally intrapreneurs intromissions intracerebral
-                    answer -> intricate
-                    The list of words is not likely to complete the text. In the other hand, intricate is a word that suits and completes the text really well.
-                
-                    End of rules.
-                    Follow the previous rules to make the best possible suggestions. Here are some example of some suggestion tasks:
-                    Example 1
-                    text: I sat on the bench with my friend and I shared my 
-                    the words starts with: t
-                    possible outputs
-                    -> to. This option is wrong, since the word has to be a noun. 'my to' makes no sense
-                    -> that. same, makes no sense
-                    -> they. same, makes no sense
-                    -> theirs. same, makes no sense
-                    -> take. same, makes no sense
-                    -> together, too, taking are other words that make no sense
-                    -> thoughts. this is a great option. The words starts with 't', just like the clue, and 'my thought' makes sense. also, 'share my thoughts' is a common sentence.
-                    -> three. Also makes sense. You can say 'I share my three'
-                    -> time. Also makes sense. Share my time is a common sentence.
-                    two team are words that also make sense
+        > how to adapt the words
+        the words you suggest have to be based on the word list, but not necessarily be identical. consider these examples that show you how to adapt the word in the word list to have the perfect output:
+        - Example 1
+        text: 'yesterday I was'
+        beginning of the new word: 'd'
+        possible words (word list): dance drive date dictate run remain ran ate eating grilling 
+        most likely (only the top options in the output, but you must provide 15): dancing driving
+        explanation: we got few clues to guess the right word
+        1) 'I was' indicates that the next word must be a verb
+        2) the words 'yesterday' and 'was' indicate that the word must agree to the past tense
+        3) the beginning of the new word 'd' indicates the word starts with d
+        therefore, from the list we chose the verbs that start with the letter 'd', which are the words 'dance' and 'drive'. Then, we changed them to the right tense so they made sense.
+        'yesterday I was driving' and 'yesterday I was dancing' are sentences that do make sense. Notice how all the options start with the letter 'd' and that the words got converted to the right conjugation
+        drive -> driving
+        dance -> dancing
 
-                    example 2
-                    text: It is always hard to be the
-                    the words start with: s
-                    possible outputs:
-                    should ->  makes no sense. 'it is always hard to be the should' makes no sense
-                    she, such, some, so, since. all these words also make no sense when appended at the end of 'it is always hard to be the'
-                    smartest -> makes perfect sense. '... the smartest' is a logical and gramatically correct sentence. Also, it starts with 's'
-                    same -> also makes sense
-                    other words that make sense are: second smallest smaller silent superior.
+        - Example 2
+        text: 'When I arrived home I saw my sister doing her homework in the floor. I wonder why she never'
+        beginning of the new word: 'd'
+        possible words (word list): dance drive date dictate run remain ran ate eating grilling do
+        most likely (only the top options in the output, but you must provide 15): does dances drives dates
+        explanation: we are talking about the sister ('she never'), therefore the next word must be conjugated for the third person and in feminine. Furthermore, the beginning of the sentence
+        is talking about her doing homework, so the word 'does' makes more sense that the words 'dances' 'drives' and 'dates' since there is not indication on the sentence about the girl doing
+        any of these actions. 'does' is definitely the best option. Notice how all the options start with the letter 'd' and that the words got converted to the right conjugation
+        drive -> drives
+        dance -> dances
+        do -> does
 
-                    example 3
-                    text: the day was
-                    the words must start with: b
-                    possible outputs:
-                    by -> 'the day was by' makes no sense. This is a bad option
-                    but -> 'the day was but' makes no sense. this is a bad options
-                    other bad options: be been born bad books board body
-                    bright ->  'the day was bright' is a good option. It is a common expression and makes sense. We are talking about the day, and the day can be bright
-                    bad -> this ia also an adjective for the day. 'the day was bad' is a great option
-                    other good options: being boring busy between both beginning
-                    `
-            prompt += `Now I will give you word options to rank according to which ones complete the paragraph better. Here is the paragraph: '${props.preText}'.
-            
-            Very important, if the word that I give you is correct, but in the wrong tense or conjugation, fix it:
-            example 
-            text: She
-            options: love like think
-            then add those three words but in the third person (loves, likes, thinks). The words are perfect, they just need to be fixed to fit the third person
+        - Example 3
+        text: 'This morning, I saw my neighbor'
+        beginning of the new word: 'w'
+        possible words (word list): walk wash watch win worry wrap write wrestle whisper whistle
+        most likely (only the top options in the output, but you must provide 15): walking washing
+        explanation: Based on the context, 'I saw my neighbor' indicates that the next word should be an action observed by the speaker. The word 'morning' helps us assume the activity could be something typically done in the morning. The beginning of the new word 'w' narrows down the options to verbs starting with 'w', which are 'walk' and 'wash'. Therefore, the most likely words are 'walking' and 'washing' as they fit the context and are transformed to the correct tense. walk -> walking wash -> washing
+        - Example 4
+        text: 'Every Sunday, we'
+        beginning of the new word: 'p'
+        possible words (word list): play prepare paint plant participate procrastinate perform purchase
+        most likely (only the top options in the output, but you must provide 15): play prepare
+        explanation: The phrase 'Every Sunday, we' suggests a habitual or routine activity that a group engages in. The beginning of the new word 'p' indicates the word starts with 'p'. From the list, 'play' and 'prepare' are the most fitting verbs that describe common Sunday activities, transformed into the right form. play -> play prepare -> prepare
+        
+        - Example 5
+        text: 'Last night, I'
+        beginning of the new word: 'c'
+        possible words (word list): cook call complete create collect chase carry catch cry celebrate
+        most likely (only the top options in the output, but you must provide 15): cooked called
+        explanation: The phrase 'Last night, I' indicates a past event or action performed by the speaker. The beginning of the new word 'c' tells us the word starts with 'c'. From the list, 'cook' and 'call' are the actions that fit the context and are changed to the correct past tense. cook -> cooked call -> called
+        
+        - Example 6
+        text: 'After lunch, she'
+        beginning of the new word: 'r'
+        possible words (word list): read relax run revise remain rearrange remember recite ride
+        most likely (only the top options in the output, but you must provide 15): reads relaxes runs
+        explanation: The phrase 'After lunch, she' suggests an activity done after a meal, by 'she'. The beginning of the new word 'r' indicates the word starts with 'r'. From the list, 'read', 'relax', and 'run' fit well into the context and are transformed into the third person singular form. read -> reads relax -> relaxes run -> runs
+        
+        
+        > additional examples. Here I will show the vocabulary to save space. But you have to always consider the list of words given!! I will also not give you a list of all the words that are a good match.
+        I will only give you the very best match that is ideally the first option in the list
+        - Example 1
+        text: It is hard to be student. There are many 
+        beginning of the word: c
+        best match: challenges
+        explanation: the text is about how hard it is to be a student, so it is normal to want to say that the are many challenges
+        final text with the best option of the output: It is hard to be student. There are many challenges
 
-            Example 2
-            text: yesterday I woke up and I 
-            options: eat see notice
-            then change those words for ate, saw, noticed. These words are okay, they just needed to be in the right tense.
-
-            Example 3
-            text: We love to 
-            options: ate plays
-            then give the words: eat, play
-
-            Example 3
-            text: We love 
-            options: ate plays
-            then give the words: eating, playing
-            these words make sense because 'we love eating' is correct, and the word 'ate' can be transformed to 'eating'. All the three words fit properly when shifted to the right tense.
-            
-            \n\n`;
-            for (let index = 0; index < word_options.length; index++) {
-                const option = word_options[index];
-                // prompt += `Option ${index + 1}: ${option}\nWith this option, the text sounds like: '${props.preText} ${option}'.\n\n`;
-                prompt += `Option ${index + 1}: ${option}\n\n`;
-            }
+        - Example 2
+        text: Hey, it is nice to meet you too! I am 36 years
+        beginning of the word: 
+        best match: old
+        explanation: the beginning of the word is empty. so the next word can start with any letter. The person is indicating their age, it is common to say 'years old' to indicate age
+        It is hard to be student. Hey, it is nice to meet you too! I am 36 years old
+        
+        - Example 3
+        text: 'I went to the park yesterday and I'
+        beginning of the new word: 
+        best matches (only the top options in the output, but you must provide 15): was did had noticed
+        explanation: Usually after the noun 'I' we add a 'to be' verb. The matching verb for the word 'I' is 'am'. However, since the story is in the past tense (I went.. yesterday), we need to change the word
+        am -> was or am -> did. Other possible words at common verbs that are related to things you experience in the park. such as have -> had (I had fun), notice -> noticed ( I noticed a game...)
+        
+        Example 4
+        text: 'The project needs to be finished by the end of the'
+        beginning of the word: d
+        best match: day
+        explanation: The text is about a project deadline, so it is logical to conclude that the word 'day' would be the best fit for the context.
+        final text with the best option of the output: 'The project needs to be finished by the end of the day'
+        - Example 5
+        text: 'I will go to the market to buy some'
+        beginning of the word: f
+        best match: fruits
+        explanation: The sentence suggests that the person is going to the market to buy something. The word 'fruits' is a common item to purchase at a market and fits the context well.
+        final text with the best option of the output: 'I will go to the market to buy some fruits'
+        - Example 6
+        text: 'She is always early to class because she'
+        beginning of the word: v
+        best match: values
+        explanation: The text is about a person being early to class, which implies that she finds it important. The word 'values' fits this context well.
+        final text with the best option of the output: 'She is always early to class because she values'
+        - Example 7
+        text: 'We enjoy going to the beach every'
+        beginning of the word: s
+        best match: summer
+        explanation: The sentence indicates a recurring activity, and the word 'summer' fits well as it is a common time for beach trips.
+        final text with the best option of the output: 'We enjoy going to the beach every summer'
+        - Example 8
+        text: 'After finishing my homework, I like to'
+        beginning of the word: r
+        best match: relax
+        explanation: The text talks about what the person does after finishing their homework, and 'relax' fits well as a common activity after completing tasks.
+        final text with the best option of the output: 'After finishing my homework, I like to relax'
+        - Example 9
+        text: ''
+        beginning of the word: ''
+        best matches: hi hello I do what today we you the
+        explanation: Notice that there is no text at all. Nor a clue of the next word. It can be any word at all. However, that means that the text is about to start, so we must
+        chose words that are likely to start a conversation. hi and hello are common ways to start talking to somebody new. I, we you are pronouns at the beginning of most sentences, and very likely
+        to be use at the beginning of any sentence. do and what are very common words to start questions. today is a very common word to start a sentence. the is the most common word to start any sentence at all.
+        By choosing this word it is very likely that any of them will successfully start the text of the user.
+        - Example 9
+        text: 'Journalists are very hard working. That is why I would like to be a'
+        beginning of the word: ''
+        best matches: journalist
+        explanation: the text is talking about how good journalists are, and they continues saying what they want to be in the future. It is inferred they want to be journalists. 
+        Example 10
+        text: 'She looked up at the night sky and saw a'
+        beginning of the word: s
+        best matches: star
+        explanation: The text describes someone looking at the night sky, which implies they might see something commonly associated with the night sky. 'Star' is a fitting word given the context, as it is a natural phenomenon often seen in the night sky.
+        final text with the best option of the output: 'She looked up at the night sky and saw a star'
+        Example 11
+        text: 'The scientist conducted an experiment to test the hypothesis that plants grow better with'
+        beginning of the word: s
+        best matches: sunlight
+        explanation: The text discusses a scientific experiment about plant growth. The word 'sunlight' is a logical match as it is a well-known factor that influences plant growth.
+        final text with the best option of the output: 'The scientist conducted an experiment to test the hypothesis that plants grow better with sunlight'
+        Example 12
+        text: 'She trained for months to compete in the'
+        beginning of the word: m
+        best matches: marathon
+        explanation: The text is about someone training for a competition. The word 'marathon' fits well because it is a common and well-known competitive event that requires extensive training.
+        final text with the best option of the output: 'She trained for months to compete in the marathon'
+        Example 13
+        text: 'The chef added a pinch of salt to the dish to'
+        beginning of the word: e
+        best matches: enhance
+        explanation: The text describes a chef adding salt to a dish, typically to improve its taste. The word 'enhance' fits well in this context as it means to improve or intensify the quality of the dish.
+        final text with the best option of the output: 'The chef added a pinch of salt to the dish to enhance'
+        Example 14
+        text: 'Despite the rain, the children continued to'
+        beginning of the word: p
+        best matches: play
+        explanation: The text mentions children and rain, implying an outdoor activity. The word 'play' is a suitable match because children often continue to play regardless of the weather.
+        final text with the best option of the output: 'Despite the rain, the children continued to play'
+    `
+    if(number_words >= 15){
+        prompt += `
+        > output format
+        Your answer must be exactly fifteen (15) words. No more, no less. exactly 15. You will return a single string that separates every word by a single space.
+        Do not wrap words in special characters like quotes or anything. Don't use new lines or extra spaces. The format is: word1 space word2 space word3 space....
+        don't add additional text. 
+        example of output: 
+        trees tree tulip tamarind tupelo thuya tamarac tamaricaceae tallow tara taratorreya tabebui terminalia Teak Toog`
+    }else{
+        prompt += `
+        > output format
+        Your answer must be exactly fifteen (15) words. No more, no less. exactly 15. You will return a single string that separates every word by a single space.
+        Do not wrap words in special characters like quotes or anything. Don't use new lines or extra spaces. The format is: word1 space word2 space word3 space....
+        don't add additional text. 
+        example of output: 
+        trees tree tulip tamarind tupelo thuya tamarac tamaricaceae tallow tara taratorreya tabebui terminalia Teak Toog
+        You will only be given ${number_words} options, so you have to suggest ${15 - number_words} additional words with the previous conditions.
+        `
+    }
+    
+    prompt += `----------------------------------------
+    > data
+    text: '${props.preText}'
+    beginning of the word: '${props.buffer}'
+    possible words:
+    `;
+    for (let index = 0; index < word_options.length; index++) {
+        const option = word_options[index];
+        // prompt += `Option ${index + 1}: ${option}\nWith this option, the text sounds like: '${props.preText} ${option}'.\n\n`;
+        prompt += `Option ${index + 1}: ${option}\n\n`;
     }
 
-    if(props.wordGroup != "")
-        prompt += `>MOST IMPORTANT RULE
-        all the options must be ${props.wordGroup}. If an option is not ${props.wordGroup}, then omit it, and replace it for new options that are ${props.wordGroup}.
-        Preferably, the ${props.wordGroup} suggested must be words that make sense when added to the current text.`
+    // // Empty Buffer
+    // const preText = props.preText
+    // if (props.buffer === "" || word_options.length == 0) {
+    //     prompt += `
+    //     `;
+    // } 
+    // // With Buffer
+    // else 
+    // {
+    //     prompt += `----------------------------------------
+    //     > data
+    //     text: '${props.preText}'
+    //     beginning of the word: '${props.buffer}'
+    //     possible words:
+    //     `;
+    //     for (let index = 0; index < word_options.length; index++) {
+    //         const option = word_options[index];
+    //         // prompt += `Option ${index + 1}: ${option}\nWith this option, the text sounds like: '${props.preText} ${option}'.\n\n`;
+    //         prompt += `Option ${index + 1}: ${option}\n\n`;
+    //     }
+    // }
+
+    
+    if(number_words < 15){
+        prompt += `
+        Remember you need to add ${15 - number_words} new words that were not listed and that make sense, so there are a total of 15 words in the output`
+    }
     return prompt;
 }
 
 // Word Variations
+// context: string, preText: string, lastWord: string,
 export function prompt_wordVariations(props:ICluesVariations) {
     if(props.lastWord == "")
         return;
@@ -348,141 +428,173 @@ export function prompt_wordVariations(props:ICluesVariations) {
     let prompt = '';
 
     // Add context
-    if (props.context) 
-        prompt += `-> context of the guesses\nThe context is ${props.context}. This means that your answer must be related to ${props.context}.\n`;
+    // if (props.context) 
+    //     prompt += `-> context of the guesses\nThe context is ${props.context}. This means that your answer must be related to ${props.context}.\n`;
     
     prompt += `The user wrote the word '${props.lastWord}'. 
-                >task
-                    Your job is to provide exactly 10 variations of the same word that use '${props.lastWord}' as the root
-                    Furthermore, the words you chose must make sense when concatenated to '${props.preText}'.
-                    Example: if the given word is 'sleep'.
-                    Then, your answer must be the same root verb. Some options are 'sleeping', 'slept', 'sleeps', 'sleepy', 'sleeper', etc.
-                    Example 2: if the given word is 'professional'.
-                    Then the suggestions must use the root word 'profession'. Good outputs are words such as  'profession', 'Professionalize', etc. Include the root word ('profession' in this case) if it is not the given word itself 
-                    Example 3: if the word is 'is'.
-                    Then the suggestion can be declinations, such as 'was', 'will be', or similar words, such as 'isn't'. 
-                    the suggestion must always be real words. Don't make up words. If you cannot find 10 real words, suggest less, but only valid words.
-
-                >Rule:
-                    DO: Only suggest real, commonly used words that are found in reputable dictionaries like Oxford, Merriam-Webster, or Cambridge.
-                    If a word is rarely used, archaic, or not recognized in major dictionaries, discard it.
-                    Avoid invented, incorrectly formed, or meaningless words (e.g., 'journalisticity', 'journaingly').
-                    Prioritize words that are frequently used in writing and speech.
-
-                >Rule:
-                    DO:
-                    Use only valid grammatical variations of the given word.
-                    Stick to recognized prefixes, suffixes, and tenses.
-                    Example: Given 'journal', valid outputs: 'journals', 'journaled', 'journaling', 'journalistic'. INVALID outputs: 'journalisticity', 'journaingly'.
-
-                >Rule:
-                    IF: No valid variations exist beyond common forms, repeat safe words instead of generating wrong words.
+                    >task: You are a very helpful writing assistant. your job is to provide alternative to the last word in the text.
+                    you will be given a 'text' and a 'last word'. You will provide alternatives to the last word that fit the text better based on the context provided by the text.
                     
-                >Rule:
-                    DO: Cross-check variations against common English words.
-                    Use standard inflections (e.g., 'journal' → 'journals', 'journaling', 'journaled').
-                    If the suggested word sounds unnatural or obscure, replace it with a more standard alternative.
-                    
-                >Rule:
-                    IF: A word is a technical term, jargon, or rare usage, prefer a simpler alternative.
-                    Example: Instead of 'journalization', use 'recording' or 'documenting' if it fits better.
-                    
-                >Rule:
-                    DO NOT: Suggest words that are rarely found in written English or do not appear in reputable dictionaries.
-                    
-                >Rule 
-                    Do: Provide only 10 words. No more, no less. Exactly 10 everytime
-                >Rule
-                    Do: Sort the words by likelihood of complete the text ${props.preText}. The first one in list must be the most likely word.
+                    > output format
+                    Your answer must be exactly ten (10) words. No more, no less. exactly 10. You will return a single string that separates every word by a single space.
+                    Do not wrap words in special characters like quotes or anything. Don't use new lines or extra spaces. All the suggestions must be real words. The format is: word1 space word2 space word3 space....
+                    don't add additional text. 
+                    example of output: 
+                    am was are had will would are did do could
 
-                >Rule: 
-                    Do not wrap the words in quotation marks or any other symbol
-                    The output has to be 10 words in a single line separated by simple space, as follows:
-                    example
-                        happy happier happily happiest unhappy excited jolly joyful content merry
-                >Rule: Start the word with capital only if it is grammatically correct (i.e., empty previous text, noun, after a period)
-                >Rule: If the word is 'be' or 'is'
-                    If the word is the verb 'be', 'is' or any of its variations (such as be, am, was, is, etc.), 
-                    look at the noun that is using that verb, and suggest matches for that verb.
-                    Example. 
-                        text -> I
-                        word to variate -> be
-                    answer
-                        Suggest words such as am, was, will, etc.
-                    explanation. It is obvious that if the user wrote noun + to be, they want to write something like I am, I was, or I will.
-                    In these cases match the noun 
-                >Rule: if the word is a preposition
-                    If the word is a preposition such as in, on, for, with, at, by, the suggested variation must be prepositions that fit better the text, starting by the most common ones to, of, in, for, with, at, by
-                    Example
-                        text -> the book is
-                        word to variate -> at
-                    Answer
-                        Suggest prepositions such as on
-                    Explanation
-                        'The book is on' is a common preposition, since books can be on tables, beds, etc.
-                >Rule: When you get verbs such as 'like', provide negative options
-                    Example
-                        word to variate -> like
-                    Answer
-                        Suggest words such as dislike, unlike
-                > Rule verb
-                    If the word is a verb, suggest tenses and conjugations of this word
-                    'run' ->  ran run runs
-                    'do' -> did didn't does doesn't 
-                > Rule adjective
-                    if the word is an adjective, suggest adverbs forms
-                    'happy' -> happily
-                    'fast' -> fastly quickly
-                    suggest superlatives
-                    'fast' -> fastest
-                    suggest relatives
-                    'large' -> larger
-                > Rule: is the word can have a valid real neggative word, add it
-                    'do'-> don't didn't
-                    yes -> no
-                    will -> won't
-                    could -> couldn't
-                > rule: nouns
-                    if the word is a noun, suggest related professions, verbs, plurals and adjective forms. Use only words that actually exist.
-                    'journal' -> journalism  journals journalist journalize
-                    journalism is a related profession, journalist is a related noun
-                    'pen' -> pens pencil draw drawing artist
-                    'hospital -> hospitals doctor patient doctors patients
-                    'school' -> schools university colleague highschool elementary kindergarten student professor 
-                > Rule: no options
-                    When the options cannot have negative or tenses, provide related words
-                    'hello' -> hi greetings 
-                > Also add opposites
-                    'new' > old
-                    'pretty' > ugly
-                    'right' > wrong
-                    'same'    > different
-                    'smart'   > dumb
-                    'tight' > loose
-                    'wet' > dry
-                > possession words
-                    if you get possession words such as my our mine me your yours hers, etc. Suggest other possession words that fit better
-                    'to see my' -> our your her his their its. Because all of these words are possessive and talk about the possession of a group of friend not defined yet
-                    'I was in your house and I ate my' -> your. Because I am in your house, everything in your house is yours.
-                > if the word is a noun, suggest other related nouns
-                    'I had a lot of fun with you' -> them
-                    'I need you' -> her him them us
-                > then
-                    propose similar words, such as 
-                    after therefore 
-                Do the same for the string '${props.lastWord}' that will go concatenated to '${props.preText}. Don't forget to give 10 options and no extra information\n
-                Examples
-                example 1
-                    pretext: the day was bright and sunny. We all
-                    word to replace: go
-                    Obviously the action is to go somewhere. The noun that is going is we. In other words, we need to conjugate the word 'go' for the noun 'we'.
-                    Some good options are: went were arrived travelled move
-                    bad options are: goes (because goes does not match we), going (because 'we all going' makes no sense. It is missing the verb 'are'), goer, goings (this is not a real word), outgo (not a real word), undergo(not a real word)
+                    > Examples
+                    - Example 1:
+                    text: I am 17
+                    last word: 17
+                    variations: seventeen tweeny-seven 27 16 18
+                    explanation: the first suggestion is to convert the number to words. Then, we are provided alternative in case there is a mistake while tipping a digit
+
+                    
+                    - Example 2:
+                    text: We are
+                    last word: are
+                    variations (only the top variations that are more likely to be used. But you need to provide 10 words in total): were will did had would could want 
+                    explanation: the last word is the verb 'to be' for the plural on first person, so we need variations of that verb. The potential results would be read as 'we were', 'we will', 'we did', etc.
+                    
+                    - Example 3:
+                    text: It is not easy to be a journalist. however it is a great career with great people, and that is why I want to be a journal
+                    last word: journal
+                    variations (only the top variations that are more likely to be used. But you need to provide 10 words in total): journalist student reporter writer
+                    explanation: 'I want to be a journal' makes no sense. But the text indicates we are talking about how good it is to be a journalist, so we provide related words.
+                    Furthermore, the person is talking about becoming (I want to be a..), so the word to change must necessarily be a profession, that is why journalist is the most likely word
+
+                    
+                    - Example 4:
+                    text: For this assignment we will dlv
+                    last word: dlv
+                    variations (only the top variations that are more likely to be used. But you need to provide 10 words in total): delve
+                    explanation: 'dlv' is not a real word. It is obviously a mistake. Since we are talking about assignment that implies research and study, very likely the word they are looking for is 'delve'
+                    specially because the word 'delve' include the characters used in the word 'dlv'. There is a very strong reason to think that is the right word.
+                    
+                    - Example 5:
+                    text: I have a lot of work to do today. I will do a presentation and then I have a meet
+                    last word: meet
+                    variations (only the top variations that are more likely to be used. But you need to provide 10 words in total): meeting reunion conference 
+                    explanation: 'Then I have a meeting' makes more sense than 'then I have a meet', so that is why it is the top alternative. The other options are words related to meeting, such as a reunion.
+                    
+                    - Example 5:
+                    text: We have be
+                    last word: be
+                    variations (only the top variations that are more likely to be used. But you need to provide 10 words in total): been
+                    explanation: This form matches the right tense be-> been. The result would be 'we have been' which is correct.
+                    --------------------------------------------------------------------------------------------------------
+                    text: ${props.preText} ${props.lastWord}
+                    last word: ${props.lastWord}
+                    
                 `;
     return prompt;
 }
 
+interface ISmartWordProps{
+    preText: string,
+    verb: string,
+}
+export function add_smart_word_prompt(props: ISmartWordProps){
+    const prompt = `
+    > task
+    You are helpful text auto completer. I will give you a text and then a verb that follows that text. Your job
+    is to change the verb to it matches correctly the previous text.
+    > output
+    The output is a single word with no extra symbols like quote marks or anything else. No  dots, periods, etc. just one single word.
+    No extra spaces or explanations
+    example of output
+    was
+    > Examples
 
+    - Example 1
+    text: 'We'
+    verb: 'am'
+    output: are
+    explanation: 'we am' makes no sense. 'am' is not in the right form and must be converted to match 'we'. The output 'are' turns the complete text into 'we are', which is grammatically correct. 
 
+    - Example 2
+    text: 'you'
+    verb: 'am'
+    output: are
+    explanation: 'you am' makes no sense. 'am' is not in the right form and must be converted to match 'you'. The output 'are' turns the complete text into 'you are', which is grammatically correct. 
 
-/// Note: it is bad suggesting new words because the best word might be 'loves', and the given word is 'loves'
+    - Example 3
+    text: 'she'
+    verb: 'run'
+    output: runs
+    explanation: 'she run' is grammatically incorrect. We need to change it 'she runs', so run->runs to match the third person (she).  
+
+    - Example 4
+    text: 'Anna's mom is cooking. Would you like to come to'
+    verb: 'my'
+    output: her
+    explanation: The texts indicates that there is good at anna's house, and proceed to invite you to go eat there. Therefore, the house belongs to anna, which is the third person. 
+    my -> her. The final text would be 'Would you like to come to her'
+
+    - Example 5
+    text: 'They'
+    verb: 'was'
+    output: were
+    explanation: 'they was' is grammatically incorrect. The verb 'was' should be changed to 'were' to match the plural subject 'they'. The final text is 'they were'.
+
+    - Example 6
+    text: 'I'
+    verb: 'go'
+    output: go
+    explanation: 'I go' is grammatically correct and no change is needed. Therefore, the verb 'go' remains unchanged. The final text is 'I go'.
+
+    - Example 7
+    text: 'He'
+    output: is
+    explanation: 'he is' is grammatically correct and no change is needed. Therefore, the verb 'is' remains unchanged. The final text is 'he is'.
+
+    - Example 8
+    text: 'We'
+    verb: 'has'
+    output: have
+    explanation: 'we has' is grammatically incorrect. The verb 'has' should be changed to 'have' to match the subject 'we'. The final text is 'we have'.
+
+    
+    - Example 9
+    text: 'You'
+    verb: 'was'
+    output: were
+    explanation: 'you was' is grammatically incorrect. The verb 'was' should be changed to 'were' to match the subject 'you'. The final text is 'you were'.
+    
+    - Example 10
+    text: 'She'
+    verb: 'have'
+    output: has
+    explanation: 'she have' is grammatically incorrect. The verb 'have' should be changed to 'has' to match the third person singular subject 'she'. The final text is 'she has'.
+    
+    - Example 11
+    text: 'It'
+    verb: 'run'
+    output: runs
+    explanation: 'it run' is grammatically incorrect. The verb 'run' should be changed to 'runs' to match the subject 'it'. The final text is 'it runs'.
+    
+    - Example 12
+    text: 'They'
+    verb: 'is'
+    output: are
+    explanation: 'they is' is grammatically incorrect. The verb 'is' should be changed to 'are' to match the plural subject 'they'. The final text is 'they are'.
+    
+    - Example 13
+    text: 'I'
+    verb: 'has'
+    output: have
+    explanation: 'I has' is grammatically incorrect. The verb 'has' should be changed to 'have' to match the subject 'I'. The final text is 'I have'.
+
+    - Example 14
+    text: 'hi, I'
+    verb: 'am'
+    output: am
+    explanation: 'hi, I am' is grammatically correct and no change is needed. Therefore, the verb 'am' remains unchanged. The final text is 'hi, I am'.
+    ------------------------------------------------------------------------------------------------
+    Enough examples. Now give me an output for this case 
+    pretext: ${props.preText}
+    verb: ${props.verb}
+    `
+
+    return prompt
+}

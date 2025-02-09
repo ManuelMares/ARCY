@@ -12,6 +12,8 @@ import { ButtonTypeEnum } from "./ENUMS/ButtonTypeEnum";
 import WordVariations from "./WordVariations";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
+import { add_smart_word_prompt } from "./Propmts";
+import { SuggestionsAPI } from "./SuggestionsAPI";
 
 
 
@@ -32,16 +34,7 @@ import { faCog } from '@fortawesome/free-solid-svg-icons';
 // }
 export default function Keyobard(){
     // Variables
-    const [text, setText] = useState<string>(`At the lies that hang like cobwebs 
-Thick clinging to the corners of my soul. 
-Do you hear me?
-The thunder in my chest roars for release,
-And yet-
-listen.
-A whisper curls beneath the storm.
-Soft as the shadow of a falling leaf:
-"What are you fighting for?"
-`);
+    const [text, setText] = useState<string>(``);
     const [buffer, setBuffer] = useState<string>("");
     const bufferRef = useRef("");
 
@@ -183,6 +176,32 @@ Soft as the shadow of a falling leaf:
             setText(text + word + " ");
             setHasWordGroup(false);
         }
+
+    }
+
+    function add_smart_word(word:string){
+        const prompt = "Give me the right verb"
+        const promptContent = add_smart_word_prompt({preText:text, verb:word}) 
+        
+        SuggestionsAPI(prompt, promptContent)
+        .then((response:string[]) => {
+            // alert(preSentence  )
+            console.log(">>>>>>>>>>>>>>>>>>>>> ",promptContent  )
+            // alert(word  )
+            // alert(response)s
+            if(displaySentenceEditor)
+            {
+                setText(preSentence + " " + response + " " + postSentence);
+                setBuffer("")
+                setHasWordGroup(false);
+                setDisplaySentenceEditor(false);
+            }
+            else{
+                // If not editing (but adding), the formula is text + buffer
+                setText(text + response + " ");
+                setHasWordGroup(false);
+            }
+        })
 
     }
 
@@ -332,48 +351,46 @@ Soft as the shadow of a falling leaf:
                             <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("think")}}>will</AccessibleButton>
                             <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("think")}}>write</AccessibleButton> 
                             
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("I")}}>be</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("it")}}>I</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("you")}}>it</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("we")}}>my</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("be")}}>we</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("my")}}>you</AccessibleButton> */}
+                            */}
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_smart_word("am")}}>AM</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_smart_word("my")}}>MY </AccessibleButton> 
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("I")}}>I</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("it")}}>it</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("we")}}>we</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"blackAlpha"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("you")}}>you</AccessibleButton>
 
 
                                 {/* SORTED BY CATEGORY */}
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("the")}}>a</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("a")}}>an</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("these")}}>any</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("an")}}>that</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("this")}}>the</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("these")}}>then</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("that")}}>these</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("these")}}>this</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("a")}}>a</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("an")}}>an</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("as")}}>as</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("that")}}>that</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("the")}}>the</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("then")}}>then</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"yellow"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("this")}}>this</AccessibleButton>
 
 
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("to")}}>and</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("with")}}>at</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("with")}}>but</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("and")}}>for</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("and")}}>and</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("at")}}>at</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("but")}}>but</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("for")}}>for</AccessibleButton>
                             <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("in")}}>in</AccessibleButton>
                             <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("not")}}>not</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("for")}}>of</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("of")}}>on</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("on")}}>to</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("of")}}>of</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("on")}}>on</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("to")}}>to</AccessibleButton>
                             <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"cyan"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("with")}}>with</AccessibleButton>
 
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("think")}}>can</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("would")}}>do</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("want")}}>go</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("need")}}>have</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("think")}}>know</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("like")}}>like</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("do")}}>need</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("think")}}>take</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("go")}}>think</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("have")}}>want</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("think")}}>will</AccessibleButton>
-                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_word("think")}}>write</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_smart_word("can")}}>CAN</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_smart_word("do")}}>DO</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_smart_word("go")}}>GO</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_smart_word("have")}}>HAVE</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_smart_word("like")}}>LIKE</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_smart_word("need")}}>NEED</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_smart_word("think")}}>THINK</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_smart_word("want")}}>WANT</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_smart_word("would")}}>WOULD</AccessibleButton>
+                            <AccessibleButton flexBasis={"28%"} buttonType={ButtonTypeEnum.HARDCODED_WORD} session_time_stamp_string={SESSION_TIME_STAMP_STRING}  my="0" py="0px" fontSize={fontSize} colorScheme={"teal"} w="7rem" delay={clickSpeed} onClick={()=>{add_smart_word("write")}}>WRITE</AccessibleButton>
 
 
                             {/* ALL SORTED  */}
