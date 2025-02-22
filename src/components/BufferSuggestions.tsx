@@ -62,7 +62,7 @@ export default function BufferSuggestions(props:Iprops){
         const prompt = `
             You are a helpful text completion system for a person who cannot talk or move. She relies completely on you for communication. 
             She is a friendly person and likes to talk casually and keep it short. 
-            She is a student in spanish department. She likes to talk to her friends and family.
+            She likes to talk to her friends and family.
 
             You are a helpful text autocompleter that helps by guessing what the next word in the paragraph will be. 
             Your job is to help her by guessing what the next word in the paragraph will be. 
@@ -125,7 +125,7 @@ export default function BufferSuggestions(props:Iprops){
 
             setLine1(array1);
             setLine2(array2);
-            setLine3(array3);
+            // setLine3(array3);
         })
     }
  
@@ -168,21 +168,21 @@ export default function BufferSuggestions(props:Iprops){
                             })
                         }
                     </Flex>
-                    <Flex alignItems={"center"} justifyContent="space-around" w="100%" >
-                        {
-                            line3.map((word:string, i:number)=>{
-                                if(word){
-                                    return(
-                                        <AccessibleButton session_time_stamp_string={props.session_time_stamp_string} text={props.text} buttonType={BUTTON_TYPE} fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l3_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} minW="10rem" h="4rem">{word}</AccessibleButton>
-                                    )
-                                }else return null;
-                            })
-                        }
-                    </Flex>
+                        {/* <Flex alignItems={"center"} justifyContent="space-around" w="100%" >
+                            {
+                                line3.map((word:string, i:number)=>{
+                                    if(word){
+                                        return(
+                                            <AccessibleButton session_time_stamp_string={props.session_time_stamp_string} text={props.text} buttonType={BUTTON_TYPE} fontSize={props.fontSize} colorScheme={props.isReplacingBuffer ? "orange" : "cyan"}  key={"l3_"+i} delay={500} onClick={()=>{props.replaceBuffer(word)}} minW="10rem" h="4rem">{word}</AccessibleButton>
+                                        )
+                                    }else return null;
+                                })
+                            }
+                        </Flex> */}
                 </Flex>
             </GridItem>
             <GridItem area={"buttons"} w="100%" h="100%">
-                <AccessibleButton session_time_stamp_string={props.session_time_stamp_string} buttonType={ButtonTypeEnum.ADD_CONTEXT} text={props.text} fontSize={props.fontSize} delay={500} onClick={()=>{updateSuggestions()}} h="4rem" w="5rem"><FontAwesomeIcon icon={faSync} size="2x" /> </AccessibleButton>
+                <AccessibleButton buttonType={BUTTON_TYPE} session_time_stamp_string={props.session_time_stamp_string} buttonType={ButtonTypeEnum.ADD_CONTEXT} text={props.text} fontSize={props.fontSize} delay={500} onClick={()=>{updateSuggestions()}} h="4rem" w="5rem"><FontAwesomeIcon icon={faSync} size="2x" /> </AccessibleButton>
             </GridItem>
 
         </Grid>

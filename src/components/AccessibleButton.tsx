@@ -1,5 +1,5 @@
 import { Button, ButtonProps } from '@chakra-ui/react';
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { registerActivity } from './firebase';
 import { ButtonTypeEnum } from './ENUMS/ButtonTypeEnum';
 import { IActivityLog } from './Interfaces/IActivityLog';
@@ -41,7 +41,16 @@ export default function AccessibleButton(props: AccessibleButtonProps) {
                 "text": props.text
             }
         }
-        
+        console.log("!!!!!!!!!!_____>>>>>>>>>", props.children)
+        const ch = props.children
+        if (React.isValidElement(ch) && ch.props) { // refresh button has an image instead of a text (it is a component, not a str)
+            activityLog["button"] = ch.props.icon.iconName;
+            console.log("!!!!!!!!!!_____>>>>>>>>>", activityLog["button"])
+        }
+        if (Array.isArray(ch)) { // refresh button has an image instead of a text (it is a component, not a str)
+            activityLog["button"] = ch[0].props.icon.iconName;
+            console.log("!!!!!!!!!!_____>>>>>>>>>", activityLog["button"])
+        }
         registerActivity(props.session_time_stamp_string, activityLog)
         .then((ans) => {
             console.log(ans);

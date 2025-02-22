@@ -54,15 +54,30 @@ export default function QWERTYKeyboard(props: IProps){
     const [symbolLevel, setSymbolLevel] = useState<ENUM_SYMBOL_LEVELS>(ENUM_SYMBOL_LEVELS.NORMAL);
     const BUTTON_TYPE = ButtonTypeEnum.QWERTY_KEYBOARD;
     let count_capital:number = 0;
+    let count_number:number = 0;
+    let count_symbol:number = 0;
 
     function resetCapitals(){
         console.log(symbolLevel)
         if(symbolLevel == ENUM_SYMBOL_LEVELS.CAPITAL)
             count_capital += 1
-
         if(count_capital == 1){
             setSymbolLevel(ENUM_SYMBOL_LEVELS.NORMAL);
             count_capital = 0;
+        }
+
+        if(symbolLevel == ENUM_SYMBOL_LEVELS.NUMBER)
+            count_number += 1
+        if(count_number == 1){
+            setSymbolLevel(ENUM_SYMBOL_LEVELS.NORMAL);
+            count_number = 0;
+        }
+
+        if(symbolLevel == ENUM_SYMBOL_LEVELS.SHIFT)
+            count_symbol += 1
+        if(count_symbol == 1){
+            setSymbolLevel(ENUM_SYMBOL_LEVELS.NORMAL);
+            count_symbol = 0;
         }
     }
     
